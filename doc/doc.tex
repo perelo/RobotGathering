@@ -1,0 +1,56 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[english,francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\usepackage[french]{varioref}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{geometry}
+\geometry{margin=2cm}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}   % coordinate calculation
+
+\title{Rassemblement d'agents mobiles}
+\author{\'Eloi Perdereau}
+%\date{}
+
+\begin{document}
+
+\maketitle
+
+\newcommand{\case}[3] {
+  \begin{tikzpicture}[thick, scale=0.6]
+    \def \step {1}
+    \def \cc {\step/2}  % center of cell
+    \coordinate (offset) at ($#1 + (\cc,\cc)$);
+    \draw[step=\step] #1 grid ($#1 + (3,3)$);   % draw the grid, base at #1
+    % draw the center circle
+    \draw ($(1,1) + (offset)$) circle (\cc*0.8);
+    % draw the neighbors
+    \foreach \coord in #2 {
+      \coordinate[at=\coord, name=A];
+      \draw ($(A) + (offset)$) circle ({\cc*0.8});
+    }
+    % draw the movement arrow
+    \draw[->] ($(1,1) + (offset)$) -- ($#3 + (offset)$);
+  \end{tikzpicture}
+}
+
+\begin{figure}[h]
+\centering
+
+\case {(0,0)}  {{(0,2)}}                   {(0,2)}
+\case {(4,0)}  {{(1,2)}}                   {(1,2)}
+\case {(8,0)}  {{(0,2),(1,2)}}             {(1,2)}
+\case {(12,0)} {{(0,2),(2,2)}}             {(1,2)}
+\case {(16,0)} {{(0,2),(1,2),(2,2)}}       {(1,2)}
+\case {(16,0)} {{(0,2),(1,2),(2,2),(2,1)}} {(1,2)}
+
+\end{figure}
+
+
+\end{document}
