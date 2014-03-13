@@ -35,7 +35,7 @@ class SpaceView(Tk.Canvas):
         # create all robots in the space
         s = self.cell_size
         for robot in self.space.get_robots():
-            i, j = robot
+            j, i = robot
             r = self.create_oval( i   *s,  j   *s,
                                  (i+1)*s, (j+1)*s, fill="black")
             self.addtag_withtag("robot", r)
@@ -47,6 +47,16 @@ class SpaceView(Tk.Canvas):
 class Space(object):
 
     # TODO maybe refactor everything and use a bitfield to represent the space
+
+    def fmt(s):
+        """ Format from string of bits to integer """
+        return int(s.strip().replace(' ',''), 2)
+
+    cases = {
+        fmt('0 0 0' \
+            '1   0' \
+            '0 1 0') : ( 1,-1),
+    }
 
     def __init__(self):
         self.robots = []
@@ -68,21 +78,29 @@ class Space(object):
 
     def robot_movement(self, i, j):
         # TODO here will be the algorithm based on surroundings
-        return (i, j+1)
+        di, dj = Space.cases.get(self.get_surroundings(i, j), (0,0))
+        return (i+di, j+dj)
 
     def get_surroundings(self, i, j, r=1):
         # TODO make it generic using r as the range
         neighboring_cells = (
-                (i+1,j-1), (i+1,j  ), (i+1,j+1),
-                (i  ,j-1),            (i  ,j+1),
                 (i-1,j-1), (i-1,j  ), (i-1,j+1),
+                (i  ,j-1),            (i  ,j+1),
+                (i+1,j-1), (i+1,j  ), (i+1,j+1),
                 )
-        return ( x for x in neighboring_cells if x in self.robots )
+        res = 0
+        n = len(neighboring_cells)
+        for k in range(n):
+            if neighboring_cells[k] in self.robots:
+                res |= 1 << (n-k-1)
+        return res
 
 s = Space()
 s.add_robot(0, 0)
 s.add_robot(0, 1)
+s.add_robot(1, 1)
 s.add_robot(40, 4)
+s.add_robot(49, 49)
 
 fenetre = Tk.Tk()
 v = SpaceView(fenetre, s, 50, 50)
