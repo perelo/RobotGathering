@@ -85,20 +85,21 @@ class Space(object):
                 res |= 1 << (n-k-1)
         return res
 
-def test_to_space(t, nb_li, nb_col, di, dj):
-    """ Convert a test_case to a Space object
-        t : the test_case (int)
-        nb_li, nb_col : the dimension of the test_case
-        di, dj : the offset
-    """
-    s = Space()
-    for i in range(nb_li*nb_col):
-        if t & (1 << i):
-            s.add_robot(nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj)
-    return s
+    def add_robots_from_test_case(self, t, nb_li, nb_col, di, dj):
+        """ Add the robots according to the test_case and the offset
+            t : the test_case (int)
+            nb_li, nb_col : the dimension of the test_case
+            di, dj : the offset
+        """
+        for i in range(nb_li*nb_col):
+            if t & (1 << i):
+                self.add_robot(nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj)
 
 
-s = test_to_space(cases.test_case, 5, 5, 22, 22)
+s = Space()
+
+test, li, col = cases.test1
+s.add_robots_from_test_case(test, li, col, 22, 22)
 
 fenetre = Tk.Tk()
 v = SpaceView(fenetre, s, 50, 50)
