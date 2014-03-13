@@ -8,6 +8,7 @@ __author__ = 'Eloi Perdereau'
 __date__ = '11-03-2014'
 
 import Tkinter as Tk
+import cases
 
 class SpaceView(Tk.Canvas):
 
@@ -48,16 +49,6 @@ class Space(object):
 
     # TODO maybe refactor everything and use a bitfield to represent the space
 
-    def fmt(s):
-        """ Format from string of bits to integer """
-        return int(s.strip().replace(' ',''), 2)
-
-    cases = {
-        fmt('0 0 0' \
-            '1   0' \
-            '0 1 0') : ( 1,-1),
-    }
-
     def __init__(self):
         self.robots = []
 
@@ -77,8 +68,7 @@ class Space(object):
         self.robots = list(next_robots)
 
     def robot_movement(self, i, j):
-        # TODO here will be the algorithm based on surroundings
-        di, dj = Space.cases.get(self.get_surroundings(i, j), (0,0))
+        di, dj = cases.neighbors_cases.get(self.get_surroundings(i, j), (0,0))
         return (i+di, j+dj)
 
     def get_surroundings(self, i, j, r=1):
@@ -95,12 +85,20 @@ class Space(object):
                 res |= 1 << (n-k-1)
         return res
 
-s = Space()
-s.add_robot(0, 0)
-s.add_robot(0, 1)
-s.add_robot(1, 1)
-s.add_robot(40, 4)
-s.add_robot(49, 49)
+def test_to_space(t, nb_li, nb_col, di, dj):
+    """ Convert a test_case to a Space object
+        t : the test_case (int)
+        nb_li, nb_col : the dimension of the test_case
+        di, dj : the offset
+    """
+    s = Space()
+    for i in range(nb_li*nb_col):
+        if t & (1 << i):
+            s.add_robot(nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj)
+    return s
+
+
+s = test_to_space(cases.test_case, 5, 5, 22, 22)
 
 fenetre = Tk.Tk()
 v = SpaceView(fenetre, s, 50, 50)
