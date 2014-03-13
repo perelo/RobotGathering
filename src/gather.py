@@ -45,27 +45,40 @@ class SpaceView(Tk.Canvas):
         self.space.next_step()
         self.update()
 
+    def prev_step(self):
+        self.space.prev_step()
+        self.update()
+
 class Space(object):
 
     # TODO maybe refactor everything and use a bitfield to represent the space
 
     def __init__(self):
-        self.robots = []
+        self.step_robots = [[]]   # list of list of robots (history)
+        self.step_index = 0
 
     def remove_robot(self, i, j):
-        self.robots.remove((i,j))
+        self.step_robots[self.step_index].remove((i,j))
 
     def add_robot(self, i, j):
-        self.robots.append((i,j))
+        self.step_robots[self.step_index].append((i,j))
 
     def get_robots(self):
-        return self.robots
+        return self.step_robots[self.step_index]
 
     def next_step(self):
-        next_robots = set()
-        for r in self.robots:
-            next_robots.add(self.robot_movement(*r))
-        self.robots = list(next_robots)
+        # check, maybe we have already computed it
+        if self.step_index +1 >= len(self.step_robots):
+            # compute all robots movement before actually moving them
+            next_robots = set()
+            for r in self.step_robots[self.step_index]:
+                next_robots.add(self.robot_movement(*r))
+            self.step_robots.append(list(next_robots))
+        self.step_index += 1
+
+    def prev_step(self):
+        if self.step_index > 0:
+            self.step_index -= 1
 
     def robot_movement(self, i, j):
         di, dj = cases.neighbors_cases.get(self.get_surroundings(i, j), (0,0))
@@ -81,7 +94,7 @@ class Space(object):
         res = 0
         n = len(neighboring_cells)
         for k in range(n):
-            if neighboring_cells[k] in self.robots:
+            if neighboring_cells[k] in self.get_robots():
                 res |= 1 << (n-k-1)
         return res
 
@@ -103,8 +116,10 @@ s.add_robots_from_test_case(test, li, col, 22, 22)
 
 fenetre = Tk.Tk()
 v = SpaceView(fenetre, s, 50, 50)
-btn = Tk.Button(fenetre, text='next step', command=lambda:v.next_step())
+btn_next = Tk.Button(fenetre, text='next', command=lambda:v.next_step())
+btn_prev = Tk.Button(fenetre, text='prev', command=lambda:v.prev_step())
 
 v.pack()
-btn.pack()
+btn_next.pack()
+btn_prev.pack()
 fenetre.mainloop()
