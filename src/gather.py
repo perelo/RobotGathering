@@ -51,8 +51,6 @@ class SpaceView(Tk.Canvas):
 
 class Space(object):
 
-    # TODO maybe refactor everything and use a bitfield to represent the space
-
     def __init__(self):
         self.step_robots = [[]]   # list of list of robots (history)
         self.step_index = 0
@@ -109,17 +107,50 @@ class Space(object):
                 self.add_robot(nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj)
 
 
-s = Space()
+if __name__ == '__main__':
+    s = Space()
 
-test, li, col = cases.test1
-s.add_robots_from_test_case(test, li, col, 22, 22)
+    # the test_cases to be added to the Space
+    displayed_test_cases = [
 
-fenetre = Tk.Tk()
-v = SpaceView(fenetre, s, 50, 50)
-btn_next = Tk.Button(fenetre, text='next', command=lambda:v.next_step())
-btn_prev = Tk.Button(fenetre, text='prev', command=lambda:v.prev_step())
+        ( cases.test_cases['square3'],     0,  0 ),
+        ( cases.test_cases['square4'],     0,  5 ),
+        ( cases.test_cases['square5'],     0, 11 ),
+        ( cases.test_cases['square6'],     0, 18 ),
+        ( cases.test_cases['square7'],     0, 26 ),
+        ( cases.test_cases['square8'],     0, 35 ),
+        ( cases.test_cases['stair3'],      10,  0 ),
+        ( cases.test_cases['stair4'],      10, 10 ),
+        ( cases.test_cases['stair5'],      10, 20 ),
+        ( cases.test_cases['stair5,7'],    10, 35 ),
+        ( cases.test_cases['bloc2,3'],    21,  0 ),
+        ( cases.test_cases['bloc2,4'],    21,  5 ),
+        ( cases.test_cases['bloc2,5'],    21, 11 ),
+        ( cases.test_cases['bloc3,3'],    21, 18 ),
+        ( cases.test_cases['bloc4,4'],    21, 23 ),
+        ( cases.test_cases['garden3,7'],  27,  0 ),
+        ( cases.test_cases['garden3,9'],  27, 10 ),
+        ( cases.test_cases['garden5,9'],  27, 22 ),
+        ( cases.test_cases['garden5,11'], 27, 34 ),
+        ( cases.test_cases['diag5,6'], 40,  0 ),
+        ( cases.test_cases['diag7,8'], 40, 10 ),
 
-v.pack()
-btn_next.pack()
-btn_prev.pack()
-fenetre.mainloop()
+        ]
+
+    # add the test_cases to the Space
+    for dtc in displayed_test_cases:
+        test, i, j = dtc
+        t, li, col = test
+        s.add_robots_from_test_case(t, li, col, i, j)
+
+    # create the window, the canvas and the buttons
+    fenetre = Tk.Tk()
+    v = SpaceView(fenetre, s, 50, 50)
+    btn_next = Tk.Button(fenetre, text='next', command=lambda:v.next_step())
+    btn_prev = Tk.Button(fenetre, text='prev', command=lambda:v.prev_step())
+
+    # pack everything and display
+    v.pack()
+    btn_next.pack()
+    btn_prev.pack()
+    fenetre.mainloop()
