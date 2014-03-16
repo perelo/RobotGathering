@@ -13,14 +13,11 @@
 
 \usepackage{tikz}
 \usetikzlibrary{calc}   % coordinate calculation
+\usepackage{xifthen}
 
 \title{Rassemblement d'agents mobiles}
 \author{\'Eloi Perdereau}
 %\date{}
-
-\begin{document}
-
-\maketitle
 
 \newcommand{\case}[3] {
   \begin{tikzpicture}[thick, scale=0.6]
@@ -35,21 +32,72 @@
       \coordinate[at=\coord, name=A];
       \draw ($(A) + (offset)$) circle ({\cc*0.8});
     }
-    % draw the movement arrow
+    % draw the movement arrow if #3 is not empty
+    \ifthenelse{\equal{#3}{}}{}{
     \draw[->] ($(1,1) + (offset)$) -- ($#3 + (offset)$);
+    }
   \end{tikzpicture}
 }
 
-\begin{figure}[h]
-\centering
+\begin{document}
 
+\maketitle
+
+\section{Cas}
+
+Les cas symétriques sont omis.
+
+\subsection{1 voisins}
 \case {(0,0)}  {{(0,2)}}                   {(0,2)}
 \case {(4,0)}  {{(1,2)}}                   {(1,2)}
-\case {(8,0)}  {{(0,2),(1,2)}}             {(1,2)}
-\case {(12,0)} {{(0,1),(1,2)}}             {(0,2)}
-\case {(16,0)} {{(0,2),(2,2)}}             {(1,2)}
-\case {(20,0)} {{(0,2),(1,2),(2,2)}}       {(1,2)}
-\case {(24,0)} {{(0,2),(1,2),(2,2),(2,1)}} {(1,2)}
+
+\subsection{2 voisins}
+\case {( 0,0)} {{(0,2),(1,2)}}             {(1,2)}
+\case {( 4,0)} {{(0,1),(1,2)}}             {(0,2)}
+\case {( 8,0)} {{(0,2),(2,2)}}             {(1,2)}
+\case {(12,0)} {{(0,2),(2,1)}}             {}
+\case {(16,0)} {{(0,2),(2,0)}}             {}
+\case {(20,0)} {{(1,2),(1,0)}}             {}
+
+\subsection{3 voisins}
+\case {( 0,0)} {{(0,2),(1,2),(2,2)}}       {(1,2)}
+\case {(20,0)} {{(0,2),(1,2),(0,1)}}       {(1,2)}
+\case {( 4,0)} {{(0,2),(1,2),(2,1)}}       {(1,2)}
+\case {(16,0)} {{(0,2),(1,2),(0,0)}}       {}
+\case {(12,0)} {{(0,2),(1,2),(1,0)}}       {}
+\case {( 8,0)} {{(0,2),(1,2),(2,0)}}       {} \\
+
+\case {( 0,4)} {{(0,2),(2,2),(2,0)}}       {}
+\case {( 4,4)} {{(0,2),(2,2),(1,0)}}       {}
+\case {( 8,4)} {{(1,2),(0,1),(2,1)}}       {}
+\case {(12,4)} {{(1,2),(0,1),(2,0)}}       {}
+
+\subsection{4 voisins}
+\case {(0,0)} {{(0,2),(1,2),(2,2),(2,1)}} {(1,2)}
+\case {(0,0)} {{(0,2),(1,2),(2,2),(2,0)}} {}
+\case {(0,0)} {{(0,2),(1,2),(2,2),(1,0)}} {} \\
+
+\case {(0,0)} {{(0,2),(1,2),(2,1),(2,0)}} {}
+\case {(0,0)} {{(0,2),(1,2),(2,1),(1,0)}} {}
+\case {(0,0)} {{(0,2),(1,2),(2,1),(0,0)}} {}
+\case {(0,0)} {{(0,2),(1,2),(2,1),(0,1)}} {} \\
+
+\case {(0,0)} {{(0,2),(1,2),(2,0),(1,0)}} {}
+\case {(0,0)} {{(0,2),(1,2),(2,0),(0,0)}} {}
+\case {(0,0)} {{(0,2),(1,2),(2,0),(0,1)}} {}
+\case {(0,0)} {{(0,2),(1,2),(1,0),(0,0)}} {}
+\case {(0,0)} {{(0,2),(2,2),(2,0),(0,0)}} {}
+\case {(0,0)} {{(1,2),(2,1),(1,0),(0,1)}} {}
+
+
+\subsection{5 voisins et plus}
+Pour énumérer les cas avec 5 et 6 robots voisins, il suffit de prendre le
+complémentaire des cas avec respectivement 3 et 2 robots voisins.
+Aucun de ces cas n'entraine un mouvement de la part du robot concerné.
+
+
+\begin{figure}[h]
+\centering
 
 \end{figure}
 
