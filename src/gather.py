@@ -33,13 +33,19 @@ class SpaceView(Tk.Canvas):
         # delete all robots present in the grid
         for r in self.find_withtag("robot"):
             self.delete(r)
-        # create all robots in the space
+        # get the bitfield representing the space
+        field = self.space.get_robots_bin(self.width, self.height)
+        sz = self.width * self.height
         s = self.cell_size
-        for robot in self.space.get_robots():
-            j, i = robot
-            r = self.create_oval( i   *s,  j   *s,
-                                 (i+1)*s, (j+1)*s, fill="black")
-            self.addtag_withtag("robot", r)
+        for i in xrange(sz):
+            # convert binary coordinate to x, y coordinates
+            y, x = i//self.width, i%self.width
+            if field & (1 << sz-i):
+                # draw the robot
+                r = self.create_oval( x   *s,  y   *s,
+                                     (x+1)*s, (y+1)*s, fill="black")
+                # attach a tag, so we can get them easily w/ find_withtag()
+                self.addtag_withtag("robot", r)
 
     def next_step(self):
         self.space.next_step()
@@ -48,6 +54,7 @@ class SpaceView(Tk.Canvas):
     def prev_step(self):
         self.space.prev_step()
         self.update()
+
 
 class Space(object):
 
@@ -63,6 +70,15 @@ class Space(object):
 
     def get_robots(self):
         return self.step_robots[self.step_index]
+
+    def get_robots_bin(self, w, h):
+        # convert i, j coordinates to binary coordinate,
+        # at the end, the space will be represented by a bitfield.
+        # for now it's not, but the SpaceView update itself w/ a bitfield
+        res = 0
+        for i, j in self.step_robots[self.step_index]:
+            res |= 1 << (w * (h-i-1)) + (w-j-1)
+        return res
 
     def next_step(self):
         # check, maybe we have already computed it
