@@ -1,0 +1,90 @@
+# one neighbor
+1 0 0
+0   0
+0 0 0
+-1,-1
+
+0 1 0
+0   0
+0 0 0
+-1, 0
+
+# two neighbors : themselves neighbors
+1 1 0
+0   0
+0 0 0
+-1, 0
+
+0 1 1
+0   0
+0 0 0
+-1, 0
+
+# two neighbors : on non-opposite orthos
+0 1 0
+1   0
+0 0 0
+-1,-1
+
+# two neighbors : on non-opposite corners
+1 0 1
+0   0
+0 0 0
+-1, 0
+
+# two neighbors : corner and opposite ortho
+1 0 0
+0   1
+0 0 0
+-1, 0
+
+0 0 1
+1   0
+0 0 0
+-1, 0
+
+# three neighbors : on a line
+1 1 1
+0   0
+0 0 0
+-1, 0
+
+# three neighbors : like a square
+1 1 0
+1   0
+0 0 0
+-1, 0
+
+# three neighbors : like a snake
+1 1 0
+0   1
+0 0 0
+-1, 0
+
+0 1 1
+1   0
+0 0 0
+-1, 0
+
+# three neighbors : two themselves neighbor, other on non-opposite corner
+1 0 1
+1   0
+0 0 0
+-1, 0
+
+1 0 1
+0   1
+0 0 0
+-1, 0
+
+# four neighbors : doing a 'L'
+1 1 1
+0   1
+0 0 0
+-1, 0
+
+1 1 1
+1   0
+0 0 0
+-1, 0
+
