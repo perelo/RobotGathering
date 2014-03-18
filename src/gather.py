@@ -64,12 +64,6 @@ class Space(object):
         self.step_robots = [[]]   # list of list of robots (history)
         self.step_index = 0
 
-    def remove_robot(self, i, j):
-        self.step_robots[self.step_index].remove((i,j))
-
-    def add_robot(self, i, j):
-        self.step_robots[self.step_index].append((i,j))
-
     def get_robots(self):
         return self.step_robots[self.step_index]
 
@@ -122,7 +116,8 @@ class Space(object):
         """
         for i in range(nb_li*nb_col):
             if t & (1 << i):
-                self.add_robot(nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj)
+                self.step_robots[self.step_index]. \
+                        append((nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj))
 
 
 if __name__ == '__main__':
