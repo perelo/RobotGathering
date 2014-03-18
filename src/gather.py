@@ -24,9 +24,11 @@ class SpaceView(Tk.Canvas):
 
         # draw the grid lines
         for i in range(1, width+1):
-            self.create_line(i*cell_size, 0, i*cell_size, height*cell_size, fill="grey")
+            self.create_line(i*cell_size, 0,
+                             i*cell_size, height*cell_size, fill="grey")
         for i in range(1, height+1):
-            self.create_line(0, i*cell_size, width*cell_size, i*cell_size, fill="grey")
+            self.create_line(0,               i*cell_size,
+                             width*cell_size, i*cell_size, fill="grey")
         self.update()
 
     def update(self):
