@@ -98,7 +98,7 @@ class Space(object):
         # TODO make it generic using r as the range
         neighboring_cells = (
                 (i-1,j-1), (i-1,j  ), (i-1,j+1),
-                (i  ,j-1),            (i  ,j+1),
+                (i  ,j-1), (i  ,j  ), (i  ,j+1),
                 (i+1,j-1), (i+1,j  ), (i+1,j+1),
                 )
         res = 0
