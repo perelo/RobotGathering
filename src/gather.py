@@ -77,22 +77,62 @@ class Space(object):
         return res
 
     def next_step(self):
-        # check, maybe we have already computed it
-        if self.step_index +1 >= len(self.step_robots):
-            # compute all robots movement before actually moving them
-            next_robots = set()
-            for r in self.step_robots[self.step_index]:
-                next_robots.add(self.robot_movement(*r))
-            self.step_robots.append(list(next_robots))
+        # check, maybe we have already computed the next step
+        if self.step_index +1 < len(self.step_robots):
+            self.step_index += 1
+            return
+
+        # compute all robots movement before actually moving them. Store them
+        # either in robots_in_danger or robots_safe, the next step will be an
+        # union and the "backup state" will depend on robots_in_dangers
+        robots_in_danger = []
+        robots_backup = []
+        robots_safe = set()
+        for r in self.step_robots[self.step_index]:
+            r_next, in_danger = self.robot_movement(*r)
+            if in_danger:
+                # r_next will potentially have to move back to its old pos (r)
+                robots_in_danger.append(r_next)
+                robots_backup.append(r)
+            else:
+                # r_next is safe
+                robots_safe.add(r_next)
+        # "apply" the movement to all the robots, ie create a new "step" in
+        # self.step_robots containing all the new robots positions
+        next_robots = robots_safe.union(set(robots_in_danger))
+        self.step_robots.append(list(next_robots))
         self.step_index += 1
+
+        # handle robots_in_danger if any
+        # (we needed to actually move the robots (i.e the two lines above)
+        # before handling robots in danger because of the surroundings)
+        if robots_in_danger:
+            # for each robots in danger, check if they have reached a
+            # non-connex state <=> they have only one neighbor <=>
+            # they are in the case 1 or 2
+            for i, r_danger in enumerate(robots_in_danger):
+                surrounding = self.get_surroundings(*r_danger)
+                # let's save the robot in danger
+                r_saved = robots_backup[i] \
+                        if cases.symetrics.get(surrounding, -1) in (1,2) \
+                        else r_danger
+                # add the saved robot
+                robots_safe.add(r_saved)
+            # update the current robot set to the saved ones
+            self.step_robots[self.step_index] = list(robots_safe)
 
     def prev_step(self):
         if self.step_index > 0:
             self.step_index -= 1
 
     def robot_movement(self, i, j):
-        di, dj = cases.neighbors_cases.get(self.get_surroundings(i, j), (0,0))
-        return (i+di, j+dj)
+        # get the surrounding area of the robot i,j
+        surrounding = self.get_surroundings(i, j)
+        # not ok if it is in a dangerous case
+        danger = cases.symetrics.get(surrounding, -1) in (7, 8)
+        # get the movement and return
+        di, dj = cases.neighbors_cases.get(surrounding, (0,0))
+        return (i+di, j+dj), danger
 
     def get_surroundings(self, i, j, r=1):
         # TODO make it generic using r as the range
