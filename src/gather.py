@@ -259,6 +259,7 @@ if __name__ == '__main__':
         ( cases.test_cases['garden5,11'], 27, 34 ),
         ( cases.test_cases['diag5,6'], 40,  0 ),
         ( cases.test_cases['diag7,8'], 40, 10 ),
+        ( cases.test_cases['wierd1'],  40, 20 ),
 
         ]
 
