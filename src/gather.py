@@ -61,7 +61,7 @@ class SpaceView(Tk.Canvas):
 class Space(object):
 
     def __init__(self):
-        self.step_robots = [[]]   # list of list of robots (history)
+        self.step_robots = [set()]   # list of sets of robots (history)
         self.step_index = 0
 
     def get_robots(self):
@@ -100,7 +100,7 @@ class Space(object):
         # "apply" the movement to all the robots, ie create a new "step" in
         # self.step_robots containing all the new robots positions
         next_robots = robots_safe.union(set(robots_in_danger))
-        self.step_robots.append(list(next_robots))
+        self.step_robots.append(next_robots)
         self.step_index += 1
 
         # handle robots_in_danger if any
@@ -119,7 +119,7 @@ class Space(object):
                 # add the saved robot
                 robots_safe.add(r_saved)
             # update the current robot set to the saved ones
-            self.step_robots[self.step_index] = list(robots_safe)
+            self.step_robots[self.step_index] = robots_safe
 
     def prev_step(self):
         if self.step_index > 0:
@@ -157,7 +157,7 @@ class Space(object):
         for i in range(nb_li*nb_col):
             if t & (1 << i):
                 self.step_robots[self.step_index]. \
-                        append((nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj))
+                        add((nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj))
 
 
 if __name__ == '__main__':
