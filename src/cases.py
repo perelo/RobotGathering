@@ -102,14 +102,28 @@ def load_mvt_cases(fname):
     # create symetric cases
     neighbors_cases = {}
     symetrics = {}
+    discnx = {}
     i = 1
     for case in nosym_cases:
         for rotate in [_rotate0, _rotate90, _rotate180, _rotate270]:
             x, mvt = rotate(case)
             neighbors_cases[x] = mvt
             symetrics[x] = i
+            # add discnx for the special bad cases :
+            # they are the neighbors to check after a dangerous move
+            # (at least one neighbor must be present)
+            if i in (7, 8):
+                if i == 7:
+                    dx, _ = rotate((fmt('0 0 0' \
+                                        '0 0 1' \
+                                        '0 1 1'), (1,1)))
+                if i == 8:
+                    dx, _ = rotate((fmt('0 0 0' \
+                                        '1 0 0' \
+                                        '1 1 0'), (1,1)))
+                discnx[x] = dx
         i += 1
-    return neighbors_cases, symetrics
+    return neighbors_cases, symetrics, discnx
 
 
 def load_test_cases(fname):
@@ -136,4 +150,4 @@ def load_test_cases(fname):
     return bs
 
 test_cases = load_test_cases('../res/tests.txt')
-neighbors_cases, symetrics = load_mvt_cases('../res/cases.txt')
+neighbors_cases, symetrics, discnx = load_mvt_cases('../res/cases.txt')

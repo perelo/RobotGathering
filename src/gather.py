@@ -94,14 +94,15 @@ class Space(object):
         # either in robots_in_danger or robots_safe, the next step will be an
         # union and the "backup state" will depend on robots_in_dangers
         robots_in_danger = []
-        robots_backup = []
+        robots_memory = []
         robots_safe = set()
         for r in self.step_robots[self.step_index]:
             r_next, in_danger = self.robot_movement(*r)
             if in_danger:
                 # r_next will potentially have to move back to its old pos (r)
                 robots_in_danger.append(r_next)
-                robots_backup.append(r)
+                # memorize the previous surrounding and position
+                robots_memory.append((self.get_surroundings(*r), r))
             else:
                 # r_next is safe
                 robots_safe.add(r_next)
@@ -120,9 +121,12 @@ class Space(object):
             # they are in the case 1 or 2
             for i, r_danger in enumerate(robots_in_danger):
                 surrounding = self.get_surroundings(*r_danger)
-                # let's save the robot in danger
-                r_saved = robots_backup[i] \
-                        if cases.symetrics.get(surrounding, -1) in (1,2) \
+                # let's save the robot in danger :
+                # move back if it was disconnexed, ie if none of the neighbors
+                # designated by discnx are present (see cases.py)
+                prev_surrounding, prev_pos = robots_memory[i]
+                r_saved = prev_pos \
+                        if surrounding & cases.discnx[prev_surrounding] == 0 \
                         else r_danger
                 # add the saved robot
                 robots_safe.add(r_saved)
