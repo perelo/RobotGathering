@@ -63,6 +63,7 @@ class Space(object):
     def __init__(self):
         self.step_robots = [set()]   # list of sets of robots (history)
         self.step_index = 0
+        self.quescient_step_index = float('inf')
 
     def get_robots(self):
         return self.step_robots[self.step_index]
@@ -77,6 +78,10 @@ class Space(object):
         return res
 
     def next_step(self):
+        # check if we have reached a quescient state
+        if self.step_index >= self.quescient_step_index:
+            return
+
         # check, maybe we have already computed the next step
         if self.step_index +1 < len(self.step_robots):
             self.step_index += 1
@@ -120,6 +125,16 @@ class Space(object):
                 robots_safe.add(r_saved)
             # update the current robot set to the saved ones
             self.step_robots[self.step_index] = robots_safe
+
+        # if the new state is the same as the previous one, we have are done
+        # TODO refactor this : it must be the robots individually who decides
+        # wether they are done or not (if, after moving on a case 1,2 or 10,
+        # we are in a symetric case, (or if we are alone) then we stop)
+        if self.step_robots[self.step_index] == \
+                                        self.step_robots[self.step_index-1]:
+            self.quescient_step_index = self.step_index-1
+            self.step_index -= 1
+            self.step_robots.pop()
 
     def prev_step(self):
         if self.step_index > 0:
