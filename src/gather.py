@@ -8,6 +8,9 @@ __author__ = 'Eloi Perdereau'
 __date__ = '11-03-2014'
 
 import Tkinter as Tk
+from random import shuffle
+from math import log
+
 import cases
 
 class SpaceView(Tk.Canvas):
@@ -174,6 +177,56 @@ class Space(object):
                 self.step_robots[self.step_index]. \
                         add((nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj))
 
+def generate_random_connex_space(height, width, n):
+    # bitfield of w*h 1s
+    s = (1 << (width*height)) -1
+    # shuffle all positions
+    rpos = range(width*height)
+    shuffle(rpos)
+
+    sz = width*height
+    for pos in rpos:
+        # turn off the bit
+        s = s & ~(1 << pos)
+        if not is_connex(s, sz-1, width):
+            # turn it back on
+            s = s | (1 << pos)
+        else:
+            sz -= 1
+            if sz <= n:
+                return s
+    return s
+
+def is_connex(s, sz, width):
+    # TODO : minimize recursion because stack overflow when sz >= 30
+    count = [0]     # the count variable, it's array cuz of scoping
+    def dfs(x, pos):
+        # TODO : memoization ? computation of already called pos is quick
+        # check if the bit is set
+        if pos < 0 or x & (1 << pos) == 0:
+            return x
+        # unset the bit and increment counter
+        x = x & ~(1 << pos)
+        count[0] += 1
+        if pos%width != 0:          # not on the right border
+            # call on right neighbors
+            x = dfs(x, pos+width-1)
+            x = dfs(x, pos-1      )
+            x = dfs(x, pos-width-1)
+        if pos%width != width-1:    # not on the left border
+            # call on left neighbors
+            x = dfs(x, pos+width+1)
+            x = dfs(x, pos+1      )
+            x = dfs(x, pos-width+1)
+        # call on up and down neighbor
+        x = dfs(x, pos+width)
+        x = dfs(x, pos-width)
+        return x
+
+    # start dfs with the rightmost set bit
+    rmost_bit = s & (-s)
+    dfs(s, int(log(rmost_bit, 2)))
+    return sz == count[0]
 
 if __name__ == '__main__':
     s = Space()
