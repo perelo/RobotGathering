@@ -81,11 +81,13 @@ def load_mvt_cases(fname):
         than we generate all symetric cases by rotating each one of them
         /!\ this code is terrible, but nevermind
     """
-    nosym_cases = {}
+    nosym_cases = []
     def add_case(b):
         if b:
-            coords = b.pop().split(',')
-            nosym_cases[fmt(''.join(b))] = tuple(map(int, coords))
+            str_coords = b.pop().split(',')
+            coords = tuple(map(int, str_coords))
+            x = fmt(''.join(b))
+            nosym_cases.append((x, coords))
     with open(fname, 'r') as f:
         b = []
         for l in f:
@@ -97,13 +99,17 @@ def load_mvt_cases(fname):
                     b.append(l)
     add_case(b)
 
-    # create synonyms
+    # create symetric cases
     neighbors_cases = {}
-    for case in nosym_cases.iteritems():
+    symetrics = {}
+    i = 1
+    for case in nosym_cases:
         for rotate in [_rotate0, _rotate90, _rotate180, _rotate270]:
             x, mvt = rotate(case)
             neighbors_cases[x] = mvt
-    return neighbors_cases
+            symetrics[x] = i
+        i += 1
+    return neighbors_cases, symetrics
 
 
 def load_test_cases(fname):
@@ -130,4 +136,4 @@ def load_test_cases(fname):
     return bs
 
 test_cases = load_test_cases('../res/tests.txt')
-neighbors_cases = load_mvt_cases('../res/cases.txt')
+neighbors_cases, symetrics = load_mvt_cases('../res/cases.txt')
