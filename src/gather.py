@@ -232,9 +232,7 @@ def is_connex(s, sz, width):
     dfs(s, int(log(rmost_bit, 2)))
     return sz == count[0]
 
-if __name__ == '__main__':
-    s = Space()
-
+def fill_with_test_cases(s):
     # the test_cases to be added to the Space
     displayed_test_cases = [
 
@@ -268,6 +266,19 @@ if __name__ == '__main__':
         test, i, j = dtc
         t, li, col = test
         s.add_robots_from_test_case(t, li, col, i, j)
+
+
+def fill_with_random_connex(s):
+    li, col = 30, 30    # above 30x30 -> stack overflow
+    r = generate_random_connex_space(li, col, (li*col)/4)
+    s.add_robots_from_test_case(r, li, col, 10, 10)
+
+
+if __name__ == '__main__':
+    s = Space()
+
+    fill_with_random_connex(s)
+    # fill_with_test_cases(s)
 
     # create the window, the canvas and the buttons
     fenetre = Tk.Tk()
