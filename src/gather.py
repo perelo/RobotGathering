@@ -40,6 +40,7 @@ class SpaceView(Tk.Canvas):
             self.delete(r)
         # get the bitfield representing the space
         field = self.space.get_robots_bin(self.width, self.height)
+        color = "red" if self.space.is_quescient() else "black"
         sz = self.width * self.height
         s = self.cell_size
         for i in xrange(sz):
@@ -48,7 +49,7 @@ class SpaceView(Tk.Canvas):
             if field & (1 << sz-i):
                 # draw the robot
                 r = self.create_oval( x   *s,  y   *s,
-                                     (x+1)*s, (y+1)*s, fill="black")
+                                     (x+1)*s, (y+1)*s, fill=color)
                 # attach a tag, so we can get them easily w/ find_withtag()
                 self.addtag_withtag("robot", r)
 
@@ -67,6 +68,9 @@ class Space(object):
         self.step_robots = [set()]   # list of sets of robots (history)
         self.step_index = 0
         self.quescient_step_index = float('inf')
+
+    def is_quescient(self):
+        return self.quescient_step_index == self.step_index
 
     def get_robots(self):
         return self.step_robots[self.step_index]
@@ -139,9 +143,9 @@ class Space(object):
         # we are in a symetric case, (or if we are alone) then we stop)
         if self.step_robots[self.step_index] == \
                                         self.step_robots[self.step_index-1]:
-            self.quescient_step_index = self.step_index-1
-            self.step_index -= 1
-            self.step_robots.pop()
+            self.quescient_step_index = self.step_index
+            # self.step_index -= 1
+            # self.step_robots.pop()
 
     def prev_step(self):
         if self.step_index > 0:
