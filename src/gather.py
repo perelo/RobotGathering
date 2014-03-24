@@ -46,9 +46,9 @@ class SpaceView(Tk.Canvas):
         for i in xrange(sz):
             # convert binary coordinate to x, y coordinates
             y, x = i//self.width, i%self.width
-            if field & (1 << sz-i):
+            if field & (1 << sz-i-1):
                 # draw the robot
-                color = "red" if self.space.is_robot_finish(y,x-1) else "black"
+                color = "red" if self.space.is_robot_finish(y,x) else "black"
                 r = self.create_oval( x   *s,  y   *s,
                                      (x+1)*s, (y+1)*s, fill=color)
                 # attach a tag, so we can get them easily w/ find_withtag()
@@ -201,7 +201,7 @@ class Space(object):
         for i in range(nb_li*nb_col):
             if t & (1 << i):
                 self.step_robots[self.step_index]. \
-                        add((nb_li-(i//nb_col)+di, nb_col-(i%nb_col)+dj))
+                        add((nb_li-(i//nb_col)+di-1, nb_col-(i%nb_col)+dj-1))
 
 def generate_random_connex_space(height, width, n):
     # bitfield of w*h 1s
