@@ -10,6 +10,7 @@ __date__ = '11-03-2014'
 import Tkinter as Tk
 from random import shuffle
 from math import log
+import operator
 
 import cases
 
@@ -40,7 +41,6 @@ class SpaceView(Tk.Canvas):
             self.delete(r)
         # get the bitfield representing the space
         field = self.space.get_robots_bin(self.width, self.height)
-        color = "red" if self.space.is_quescient() else "black"
         sz = self.width * self.height
         s = self.cell_size
         for i in xrange(sz):
@@ -48,6 +48,7 @@ class SpaceView(Tk.Canvas):
             y, x = i//self.width, i%self.width
             if field & (1 << sz-i):
                 # draw the robot
+                color = "red" if self.space.is_robot_finish(y,x-1) else "black"
                 r = self.create_oval( x   *s,  y   *s,
                                      (x+1)*s, (y+1)*s, fill=color)
                 # attach a tag, so we can get them easily w/ find_withtag()
@@ -65,12 +66,13 @@ class SpaceView(Tk.Canvas):
 class Space(object):
 
     def __init__(self):
-        self.step_robots = [set()]   # list of sets of robots (history)
+        self.step_robots = [set()]      # list of sets of robots (history)
+        self.robots_finish = dict()     # True if finish, False otherwise
         self.step_index = 0
         self.quescient_step_index = float('inf')
 
-    def is_quescient(self):
-        return self.quescient_step_index == self.step_index
+    def is_robot_finish(self, i, j):
+        return self.robots_finish.get(((i,j), self.step_index), False)
 
     def get_robots(self):
         return self.step_robots[self.step_index]
@@ -97,24 +99,35 @@ class Space(object):
         # compute all robots movement before actually moving them. Store them
         # either in robots_in_danger or robots_safe, the next step will be an
         # union and the "backup state" will depend on robots_in_dangers
+        # TODO refactor this functionnal stuff, maybe to sthing object oriented
         robots_in_danger = []
-        robots_memory = []
+        robots_maybe_done = []
+        robots_memory_danger = []
+        robots_memory_done = []
         robots_safe = set()
         for r in self.step_robots[self.step_index]:
-            r_next, in_danger = self.robot_movement(*r)
+            r_next, in_danger, done = self.robot_movement(*r)
             if in_danger:
                 # r_next will potentially have to move back to its old pos (r)
                 robots_in_danger.append(r_next)
                 # memorize the previous surrounding and position
-                robots_memory.append((self.get_surroundings(*r), r))
+                robots_memory_danger.append((self.get_surroundings(*r), r))
             else:
                 # r_next is safe
                 robots_safe.add(r_next)
+            if done:
+                robots_maybe_done.append(r_next)
+                robots_memory_done.append(self.get_surroundings(*r))
         # "apply" the movement to all the robots, ie create a new "step" in
         # self.step_robots containing all the new robots positions
         next_robots = robots_safe.union(set(robots_in_danger))
         self.step_robots.append(next_robots)
         self.step_index += 1
+
+        # check for a lonely robots among all
+        for r in self.step_robots[self.step_index]:
+            if self.get_surroundings(*r) & ~(1 << 4) == 0:
+                self.robots_finish[(r, self.step_index)] = True
 
         # handle robots_in_danger if any
         # (we needed to actually move the robots (i.e the two lines above)
@@ -128,7 +141,7 @@ class Space(object):
                 # let's save the robot in danger :
                 # move back if it was disconnexed, ie if none of the neighbors
                 # designated by discnx are present (see cases.py)
-                prev_surrounding, prev_pos = robots_memory[i]
+                prev_surrounding, prev_pos = robots_memory_danger[i]
                 r_saved = prev_pos \
                         if surrounding & cases.discnx[prev_surrounding] == 0 \
                         else r_danger
@@ -137,15 +150,18 @@ class Space(object):
             # update the current robot set to the saved ones
             self.step_robots[self.step_index] = robots_safe
 
-        # if the new state is the same as the previous one, we have are done
-        # TODO refactor this : it must be the robots individually who decides
-        # wether they are done or not (if, after moving on a case 1,2 or 10,
-        # we are in a symetric case, (or if we are alone) then we stop)
-        if self.step_robots[self.step_index] == \
-                                        self.step_robots[self.step_index-1]:
+        if robots_maybe_done:
+            robots_finish = {}
+            for i, r_done in enumerate(robots_maybe_done):
+                surrounding = self.get_surroundings(*r_done)
+                prev_surrounding = robots_memory_done[i]
+                self.robots_finish[(r_done, self.step_index)] = \
+                    surrounding == cases.end_cases.get(prev_surrounding, -1)
+
+        # check if all robots are finish
+        all_done = ( self.is_robot_finish(*r) for r in self.get_robots() )
+        if reduce(operator.and_, all_done, True):
             self.quescient_step_index = self.step_index
-            # self.step_index -= 1
-            # self.step_robots.pop()
 
     def prev_step(self):
         if self.step_index > 0:
@@ -158,7 +174,9 @@ class Space(object):
         danger = cases.symetrics.get(surrounding, -1) in (7, 8)
         # get the movement and return
         di, dj = cases.neighbors_cases.get(surrounding, (0,0))
-        return (i+di, j+dj), danger
+        maybe_done = surrounding in cases.end_cases.iterkeys() and \
+                     (di,dj) != (0,0)
+        return (i+di, j+dj), danger, maybe_done
 
     def get_surroundings(self, i, j, r=1):
         # TODO make it generic using r as the range
