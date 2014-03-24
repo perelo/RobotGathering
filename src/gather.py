@@ -224,35 +224,31 @@ def generate_random_connex_space(height, width, n):
     return s
 
 def is_connex(s, sz, width):
-    # TODO : minimize recursion because stack overflow when sz >= 30
-    count = [0]     # the count variable, it's array cuz of scoping
-    def dfs(x, pos):
-        # TODO : memoization ? computation of already called pos is quick
-        # check if the bit is set
-        if pos < 0 or x & (1 << pos) == 0:
-            return x
-        # unset the bit and increment counter
-        x = x & ~(1 << pos)
-        count[0] += 1
-        if pos%width != 0:          # not on the right border
-            # call on right neighbors
-            x = dfs(x, pos+width-1)
-            x = dfs(x, pos-1      )
-            x = dfs(x, pos-width-1)
-        if pos%width != width-1:    # not on the left border
-            # call on left neighbors
-            x = dfs(x, pos+width+1)
-            x = dfs(x, pos+1      )
-            x = dfs(x, pos-width+1)
-        # call on up and down neighbor
-        x = dfs(x, pos+width)
-        x = dfs(x, pos-width)
-        return x
-
-    # start dfs with the rightmost set bit
+    count = 0
+    # start with the rightmost bit
     rmost_bit = s & (-s)
-    dfs(s, int(log(rmost_bit, 2)))
-    return sz == count[0]
+    queue = [int(log(rmost_bit, 2))]
+    while queue:   # while queue is not empty
+        pos = queue.pop()
+        if pos >= 0 and s & (1 << pos) != 0:    # if s has a robot at pos
+            # unset the bit and increment counter
+            s = s & ~(1 << pos)
+            count += 1
+            # add it's neighbors in the queue and continue
+            if pos%width != 0:          # not on the right border
+                # add right neighbors
+                queue.append(pos+width-1)
+                queue.append(pos-1      )
+                queue.append(pos-width-1)
+            if pos%width != width-1:    # not on the left border
+                # add left neighbors
+                queue.append(pos+width+1)
+                queue.append(pos+1      )
+                queue.append(pos-width+1)
+            # add up and down neighbors
+            queue.append(pos+width)
+            queue.append(pos-width)
+    return count == sz
 
 def fill_with_test_cases(s):
     # the test_cases to be added to the Space
@@ -291,7 +287,7 @@ def fill_with_test_cases(s):
 
 
 def fill_with_random_connex(s):
-    li, col = 30, 30    # above 30x30 -> stack overflow
+    li, col = 30, 30
     r = generate_random_connex_space(li, col, (li*col)/4)
     s.add_robots_from_test_case(r, li, col, 10, 10)
 
