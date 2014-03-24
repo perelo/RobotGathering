@@ -210,17 +210,19 @@ def generate_random_connex_space(height, width, n):
     rpos = range(width*height)
     shuffle(rpos)
 
-    sz = width*height
-    for pos in rpos:
+    count = width*height
+    print 'n =', n
+    while count > n and rpos:
+        pos = rpos.pop()
         # turn off the bit
         s = s & ~(1 << pos)
-        if not is_connex(s, sz-1, width):
+        count -= 1
+        # print pos, count, bin(s)
+        if not is_connex(s, count, width):
             # turn it back on
             s = s | (1 << pos)
-        else:
-            sz -= 1
-            if sz <= n:
-                return s
+            count += 1
+            rpos.insert(0, pos)
     return s
 
 def is_connex(s, sz, width):
