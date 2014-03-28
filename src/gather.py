@@ -54,12 +54,28 @@ class SpaceView(Tk.Canvas):
                 # attach a tag, so we can get them easily w/ find_withtag()
                 self.addtag_withtag("robot", r)
 
+    def remove_robot_at(self, x, y):
+        r = y//self.cell_size, x//self.cell_size
+        robots = self.space.get_robots()
+        for r2 in robots:
+            if r == r2:
+                robots.remove(r)
+                break
+
+    def add_robot_at(self, x, y):
+        r = y//self.cell_size, x//self.cell_size
+        self.space.get_robots().add(r)
+
     def next_step(self):
         self.space.next_step()
         self.update()
 
     def prev_step(self):
         self.space.prev_step()
+        self.update()
+
+    def clear(self):
+        self.space.clear()
         self.update()
 
 
@@ -70,6 +86,15 @@ class Space(object):
         self.robots_finish = dict()     # True if finish, False otherwise
         self.step_index = 0
         self.quescient_step_index = float('inf')
+
+    def clear(self):
+        self.step_robots = [set()]      # list of sets of robots (history)
+        self.robots_finish = dict()     # True if finish, False otherwise
+        self.step_index = 0
+        self.quescient_step_index = float('inf')
+
+    def is_quescient(self):
+        return self.quescient_step_index == self.step_index
 
     def is_robot_finish(self, i, j):
         return self.robots_finish.get(((i,j), self.step_index), False)
@@ -293,21 +318,38 @@ def fill_with_random_connex(s):
     r = generate_random_connex_space(li, col, (li*col)/4)
     s.add_robots_from_test_case(r, li, col, 10, 10)
 
+def remove_robot(view):
+    def fct(event):
+        view.remove_robot_at(event.x, event.y)
+        view.update()
+    return fct
+
+def add_robot(view):
+    def fct(event):
+        view.add_robot_at(event.x, event.y)
+        view.update()
+    return fct
 
 if __name__ == '__main__':
     s = Space()
 
-    fill_with_random_connex(s)
-    # fill_with_test_cases(s)
+    # fill_with_random_connex(s)
+    fill_with_test_cases(s)
 
     # create the window, the canvas and the buttons
     fenetre = Tk.Tk()
     v = SpaceView(fenetre, s, 50, 50)
     btn_next = Tk.Button(fenetre, text='next', command=lambda:v.next_step())
     btn_prev = Tk.Button(fenetre, text='prev', command=lambda:v.prev_step())
+    btn_clear = Tk.Button(fenetre, text='clear', command=lambda:v.clear())
+    v.bind("<Button-3>", remove_robot(v))
+    v.bind("<B3-Motion>", remove_robot(v))
+    v.bind("<Button-1>", add_robot(v))
+    v.bind("<B1-Motion>", add_robot(v))
 
     # pack everything and display
     v.pack()
     btn_next.pack()
     btn_prev.pack()
+    btn_clear.pack()
     fenetre.mainloop()
