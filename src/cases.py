@@ -112,7 +112,7 @@ def load_mvt_cases(fname):
             # add discnx for the special bad cases :
             # they are the neighbors to check after a dangerous move
             # (at least one neighbor must be present)
-            if i in (7, 8):
+            if i in danger_cases:
                 if i == 7:
                     dx, _ = rotate((fmt('0 0 0' \
                                         '0 0 1' \
@@ -121,9 +121,19 @@ def load_mvt_cases(fname):
                     dx, _ = rotate((fmt('0 0 0' \
                                         '1 0 0' \
                                         '1 1 0'), (1,1)))
+                if i == 13:
+                    dx, _ = rotate((fmt('1 1 0' \
+                                        '1 0 0' \
+                                        '0 0 0'), (1,1)))
+                if i == 14:
+                    dx, _ = rotate((fmt('0 1 1' \
+                                        '0 0 1' \
+                                        '0 0 0'), (1,1)))
                 discnx[x] = dx
         i += 1
     return neighbors_cases, symetrics, discnx
+
+danger_cases = (7, 8, 13, 14)
 
 def create_end_cases():
     end_cases_x = ((fmt('1 0 0' \

@@ -196,7 +196,7 @@ class Space(object):
         # get the surrounding area of the robot i,j
         surrounding = self.get_surroundings(i, j)
         # not ok if it is in a dangerous case
-        danger = cases.symetrics.get(surrounding, -1) in (7, 8)
+        danger = cases.symetrics.get(surrounding, -1) in cases.danger_cases
         # get the movement and return
         di, dj = cases.neighbors_cases.get(surrounding, (0,0))
         maybe_done = surrounding in cases.end_cases.iterkeys() and \

@@ -66,6 +66,17 @@
 0 0 0
 -1, 0
 
+# three neighbors : two themselves neighbor, other on opposite corner
+1 0 0
+1 1 0
+0 0 1
+1, 0
+
+0 0 1
+0 1 1
+1 0 0
+1, 0
+
 # three neighbors : two themselves neighbor, other on non-opposite corner
 1 0 1
 1 1 0
