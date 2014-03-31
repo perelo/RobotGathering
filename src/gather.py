@@ -17,7 +17,7 @@ from robot import Robot
 
 class SpaceView(Tk.Canvas):
 
-    def __init__(self, master, space, width, height, cell_size=10):
+    def __init__(self, master, space, width, height, cell_size=15):
         Tk.Canvas.__init__(self, master,
                                  width=width*cell_size,
                                  height=height*cell_size, bd=0)
@@ -235,28 +235,31 @@ def fill_with_test_cases(s):
     # the test_cases to be added to the Space
     displayed_test_cases = [
 
-        ( cases.test_cases['square3'],     0,  0 ),
-        ( cases.test_cases['square4'],     0,  5 ),
-        ( cases.test_cases['square5'],     0, 11 ),
-        ( cases.test_cases['square6'],     0, 18 ),
-        ( cases.test_cases['square7'],     0, 26 ),
-        ( cases.test_cases['square8'],     0, 35 ),
-        ( cases.test_cases['stair3'],      10,  0 ),
-        ( cases.test_cases['stair4'],      10, 10 ),
-        ( cases.test_cases['stair5'],      10, 20 ),
-        ( cases.test_cases['stair5,7'],    10, 35 ),
-        ( cases.test_cases['bloc2,3'],    21,  0 ),
-        ( cases.test_cases['bloc2,4'],    21,  5 ),
-        ( cases.test_cases['bloc2,5'],    21, 11 ),
-        ( cases.test_cases['bloc3,3'],    21, 18 ),
-        ( cases.test_cases['bloc4,4'],    21, 23 ),
-        ( cases.test_cases['garden3,7'],  27,  0 ),
-        ( cases.test_cases['garden3,9'],  27, 10 ),
-        ( cases.test_cases['garden5,9'],  27, 22 ),
-        ( cases.test_cases['garden5,11'], 27, 34 ),
-        ( cases.test_cases['diag5,6'], 40,  0 ),
-        ( cases.test_cases['diag7,8'], 40, 10 ),
-        ( cases.test_cases['wierd1'],  40, 20 ),
+        ( cases.test_cases['square3'],      0,  0  ),
+        ( cases.test_cases['square4'],      0,  5  ),
+        ( cases.test_cases['square5'],      0,  11 ),
+        ( cases.test_cases['square6'],      0,  18 ),
+        ( cases.test_cases['square7'],      0,  26 ),
+        ( cases.test_cases['square8'],      0,  35 ),
+        ( cases.test_cases['stair3'],       10, 0  ),
+        ( cases.test_cases['stair4'],       10, 10 ),
+        ( cases.test_cases['stair5'],       10, 20 ),
+        ( cases.test_cases['stair5,7'],     10, 35 ),
+        ( cases.test_cases['bloc2,3'],      21, 0  ),
+        ( cases.test_cases['bloc2,4'],      21, 5  ),
+        ( cases.test_cases['bloc2,5'],      21, 11 ),
+        ( cases.test_cases['bloc3,3'],      21, 18 ),
+        ( cases.test_cases['bloc4,4'],      21, 23 ),
+        ( cases.test_cases['garden3,7'],    27, 0  ),
+        ( cases.test_cases['garden3,9'],    27, 10 ),
+        ( cases.test_cases['garden5,9'],    27, 22 ),
+        ( cases.test_cases['garden5,11'],   27, 34 ),
+        ( cases.test_cases['diag5,6'],      40, 0  ),
+        ( cases.test_cases['diag7,8'],      40, 10 ),
+        ( cases.test_cases['wierd1'],       40, 20 ),
+        ( cases.test_cases['circle1'],      0,  50 ),
+        ( cases.test_cases['circle2'],      20, 50 ),
+        ( cases.test_cases['spiky-square'], 40, 50 ),
 
         ]
 
@@ -292,7 +295,7 @@ if __name__ == '__main__':
 
     # create the window, the canvas and the buttons
     fenetre = Tk.Tk()
-    v = SpaceView(fenetre, s, 50, 50)
+    v = SpaceView(fenetre, s, 70, 50)
     btn_next = Tk.Button(fenetre, text='next', command=lambda:v.next_step())
     btn_prev = Tk.Button(fenetre, text='prev', command=lambda:v.prev_step())
     btn_clear = Tk.Button(fenetre, text='clear', command=lambda:v.clear())
