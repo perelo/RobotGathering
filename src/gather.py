@@ -13,6 +13,7 @@ from math import log
 import operator
 
 import cases
+from robot import Robot
 
 class SpaceView(Tk.Canvas):
 
@@ -55,7 +56,7 @@ class SpaceView(Tk.Canvas):
                 self.addtag_withtag("robot", r)
 
     def remove_robot_at(self, x, y):
-        r = y//self.cell_size, x//self.cell_size
+        r = Robot([y//self.cell_size, x//self.cell_size])
         robots = self.space.get_robots()
         for r2 in robots:
             if r == r2:
@@ -63,7 +64,7 @@ class SpaceView(Tk.Canvas):
                 break
 
     def add_robot_at(self, x, y):
-        r = y//self.cell_size, x//self.cell_size
+        r = Robot([y//self.cell_size, x//self.cell_size])
         self.space.get_robots().add(r)
 
     def next_step(self):
@@ -123,98 +124,37 @@ class Space(object):
             self.step_index += 1
             return
 
-        # compute all robots movement before actually moving them. Store them
-        # either in robots_in_danger or robots_safe, the next step will be an
-        # union and the "backup state" will depend on robots_in_dangers
-        # TODO refactor this functionnal stuff, maybe to sthing object oriented
-        robots_in_danger = []
-        robots_maybe_done = []
-        robots_memory_danger = []
-        robots_memory_done = []
-        robots_safe = set()
-        robots_quincunx = set()
+        # compute all robot's next_positions
+        next_robots = []
         for r in self.step_robots[self.step_index]:
-            r_next, in_danger, quincunx, done = self.robot_movement(*r)
-            if in_danger:
-                # r_next will potentially have to move back to its old pos (r)
-                robots_in_danger.append(r_next)
-                # memorize the previous surrounding and position
-                robots_memory_danger.append((self.get_surroundings(*r), r))
-            elif quincunx: # cannot be in danger and quincunx in the same time
-                if r in self.robots_quincunx:   # two times in qincunx
-                    robots_safe.add(r)  # don't move
-                else:
-                    robots_quincunx.add(r_next)
-                    robots_safe.add(r_next)
-            else:
-                # r_next is safe
-                robots_safe.add(r_next)
-            if done:
-                robots_maybe_done.append(r_next)
-                robots_memory_done.append(self.get_surroundings(*r))
+            r_next = r.next_position(self.get_surroundings(*r))
+            next_robots.append(r_next)
 
-        self.robots_quincunx = robots_quincunx
-
-        # "apply" the movement to all the robots, ie create a new "step" in
-        # self.step_robots containing all the new robots positions
-        next_robots = robots_safe.union(set(robots_in_danger))
-        self.step_robots.append(next_robots)
+        # do the step, ie move all robots in the space
+        self.step_robots.append(set(next_robots))
         self.step_index += 1
 
-        # check for a lonely robots among all
+        # some robots may be in danger, do another round to save them
+        robots_safe = set()
+        for r in next_robots:
+            r_next = r.save_from_danger(self.get_surroundings(*r))
+            robots_safe.add(r_next)
+        self.step_robots[self.step_index] = robots_safe
+
+        # some robots may have done, note and count them
+        nb_done_robots = 0
         for r in self.step_robots[self.step_index]:
-            if self.get_surroundings(*r) & ~(1 << 4) == 0:
+            if r.check_if_done(self.get_surroundings(*r)):
+                nb_done_robots += 1
                 self.robots_finish[(r, self.step_index)] = True
 
-        # handle robots_in_danger if any
-        # (we needed to actually move the robots (i.e the two lines above)
-        # before handling robots in danger because of the surroundings)
-        if robots_in_danger:
-            # for each robots in danger, check if they have reached a
-            # non-connex state <=> they have only one neighbor <=>
-            # they are in the case 1 or 2
-            for i, r_danger in enumerate(robots_in_danger):
-                surrounding = self.get_surroundings(*r_danger)
-                # let's save the robot in danger :
-                # move back if it was disconnexed, ie if none of the neighbors
-                # designated by discnx are present (see cases.py)
-                prev_surrounding, prev_pos = robots_memory_danger[i]
-                r_saved = prev_pos \
-                        if surrounding & cases.discnx[prev_surrounding] == 0 \
-                        else r_danger
-                # add the saved robot
-                robots_safe.add(r_saved)
-            # update the current robot set to the saved ones
-            self.step_robots[self.step_index] = robots_safe
-
-        if robots_maybe_done:
-            robots_finish = {}
-            for i, r_done in enumerate(robots_maybe_done):
-                surrounding = self.get_surroundings(*r_done)
-                prev_surrounding = robots_memory_done[i]
-                self.robots_finish[(r_done, self.step_index)] = \
-                    surrounding == cases.end_cases.get(prev_surrounding, -1)
-
-        # check if all robots are finish
-        all_done = ( self.is_robot_finish(*r) for r in self.get_robots() )
-        if reduce(operator.and_, all_done, True):
+        # maybe we are globally quescient
+        if nb_done_robots >= len(self.step_robots[self.step_index]):
             self.quescient_step_index = self.step_index
 
     def prev_step(self):
         if self.step_index > 0:
             self.step_index -= 1
-
-    def robot_movement(self, i, j):
-        # get the surrounding area of the robot i,j
-        surrounding = self.get_surroundings(i, j)
-        # not ok if it is in a dangerous case
-        danger = cases.symetrics.get(surrounding, -1) in cases.danger_cases
-        quincunx = cases.symetrics.get(surrounding, -1) == 6
-        # get the movement and return
-        di, dj = cases.neighbors_cases.get(surrounding, (0,0))
-        maybe_done = surrounding in cases.end_cases.iterkeys() and \
-                     (di,dj) != (0,0)
-        return (i+di, j+dj), danger, quincunx, maybe_done
 
     def get_surroundings(self, i, j, r=1):
         # TODO make it generic using r as the range
@@ -239,7 +179,8 @@ class Space(object):
         for i in range(nb_li*nb_col):
             if t & (1 << i):
                 self.step_robots[self.step_index]. \
-                        add((nb_li-(i//nb_col)+di-1, nb_col-(i%nb_col)+dj-1))
+                        add(Robot([nb_li-(i//nb_col)+di-1,
+                                   nb_col-(i%nb_col)+dj-1]))
 
 def generate_random_connex_space(height, width, n):
     # bitfield of w*h 1s
