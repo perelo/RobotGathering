@@ -86,12 +86,14 @@ class Space(object):
         self.robots_finish = dict()     # True if finish, False otherwise
         self.step_index = 0
         self.quescient_step_index = float('inf')
+        self.robots_quincunx = set()
 
     def clear(self):
         self.step_robots = [set()]      # list of sets of robots (history)
         self.robots_finish = dict()     # True if finish, False otherwise
         self.step_index = 0
         self.quescient_step_index = float('inf')
+        self.robots_quincunx = set()
 
     def is_quescient(self):
         return self.quescient_step_index == self.step_index
@@ -130,19 +132,29 @@ class Space(object):
         robots_memory_danger = []
         robots_memory_done = []
         robots_safe = set()
+        robots_quincunx = set()
         for r in self.step_robots[self.step_index]:
-            r_next, in_danger, done = self.robot_movement(*r)
+            r_next, in_danger, quincunx, done = self.robot_movement(*r)
             if in_danger:
                 # r_next will potentially have to move back to its old pos (r)
                 robots_in_danger.append(r_next)
                 # memorize the previous surrounding and position
                 robots_memory_danger.append((self.get_surroundings(*r), r))
+            elif quincunx: # cannot be in danger and quincunx in the same time
+                if r in self.robots_quincunx:   # two times in qincunx
+                    robots_safe.add(r)  # don't move
+                else:
+                    robots_quincunx.add(r_next)
+                    robots_safe.add(r_next)
             else:
                 # r_next is safe
                 robots_safe.add(r_next)
             if done:
                 robots_maybe_done.append(r_next)
                 robots_memory_done.append(self.get_surroundings(*r))
+
+        self.robots_quincunx = robots_quincunx
+
         # "apply" the movement to all the robots, ie create a new "step" in
         # self.step_robots containing all the new robots positions
         next_robots = robots_safe.union(set(robots_in_danger))
@@ -197,11 +209,12 @@ class Space(object):
         surrounding = self.get_surroundings(i, j)
         # not ok if it is in a dangerous case
         danger = cases.symetrics.get(surrounding, -1) in cases.danger_cases
+        quincunx = cases.symetrics.get(surrounding, -1) == 6
         # get the movement and return
         di, dj = cases.neighbors_cases.get(surrounding, (0,0))
         maybe_done = surrounding in cases.end_cases.iterkeys() and \
                      (di,dj) != (0,0)
-        return (i+di, j+dj), danger, maybe_done
+        return (i+di, j+dj), danger, quincunx, maybe_done
 
     def get_surroundings(self, i, j, r=1):
         # TODO make it generic using r as the range
