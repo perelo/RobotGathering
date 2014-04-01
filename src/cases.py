@@ -155,6 +155,20 @@ def create_end_cases():
             end_cases[rx[0]] = _rotate180(rx)[0]
     return end_cases
 
+def create_quincunx_cases():
+    quincunx_cases_x = ((fmt('1 0 1' \
+                             '0 1 0' \
+                             '0 0 0'), (1,1)),
+                        (fmt('0 0 1' \
+                             '0 1 0' \
+                             '0 0 1'), (1,1)),
+                       )
+    quincunx_cases = {}
+    for x in quincunx_cases_x:
+        rx = _rotate180(x)
+        quincunx_cases[x[0]]  = rx[0]
+        quincunx_cases[rx[0]] = x[0]
+    return quincunx_cases
 
 def load_test_cases(fname):
     """ Read the file containing test cases
@@ -182,3 +196,4 @@ def load_test_cases(fname):
 test_cases = load_test_cases('../res/tests.txt')
 neighbors_cases, symetrics, discnx = load_mvt_cases('../res/cases.txt')
 end_cases = create_end_cases()
+quincunx_cases = create_quincunx_cases()

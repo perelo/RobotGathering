@@ -35,15 +35,19 @@ class Robot(tuple):
         if self.done:
             return self
 
+        # check for quincunxness, maybe we must not move this time
+        if self.quincunx and \
+           cases.quincunx_cases[self.last_surrounding] == surrounding:
+            self.quincunx = False
+            return self
+
         # compute the next position of the robot
         i, j = self
         di, dj = cases.neighbors_cases.get(surrounding, (0,0))
         r = Robot([i+di, j+dj])
 
-        # check for quincunxness, maybe we must not move this time
-        r.quincunx  = cases.symetrics.get(surrounding,-1) == 6
-        if self.quincunx and r.quincunx:
-            return self
+        # set if robot is in quincunx position
+        r.quincunx = surrounding in cases.quincunx_cases
 
         # check for danger cases (where we may get disconnected)
         r.in_danger = cases.symetrics.get(surrounding,-1) in cases.danger_cases
