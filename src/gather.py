@@ -9,7 +9,7 @@ __date__ = '11-03-2014'
 
 import Tkinter as Tk
 from random import shuffle
-from math import log
+from math import log, floor, ceil
 import operator
 
 import cases
@@ -273,6 +273,38 @@ def fill_with_random_connex(s, li, col, n):
     r = generate_random_connex_space(li, col, n)
     s.add_robots_from_test_case(r, li, col, 0, 0)
 
+def gen_block(m, n):
+    if m <= 0 or n <= 0:
+        return 0
+    return (1 << (m*n)) - 1
+
+def gen_rect(m, n):
+    if m <= 0 or n <= 0:
+        return 0
+    top = (1 << n) - 1
+    mid = (1 << (n-1)) | 1
+    res = (top << ((m-1)*n))    # top row
+    res |= top                  # bottom row
+    for i in xrange(1,m-1):     # middle rows
+        res |= mid << (n*i)
+    return res
+
+def test_rectangle_complexity(s):
+    for m in xrange(30, 51):
+        for n in xrange(30, 51):
+            s.clear()
+            t = gen_rect(m,n)
+            s.add_robots_from_test_case(t, m, n, 0, 0)
+            count = 0
+            while not s.is_quescient():
+                s.next_step()
+                count += 1
+            print m, n, 'donne', count
+            l, L = min(m,n), max(m,n)
+            assert count ==   ceil((L-4)/2.0) \
+                            + floor(l/2.0)*2 - 2*(1 - l%2) \
+                            + (1 - (l%2 and L%2))
+
 def remove_robot(view):
     def fct(event):
         view.remove_robot_at(event.x, event.y)
@@ -288,7 +320,8 @@ def add_robot(view):
 if __name__ == '__main__':
     s = Space()
 
-    fill_with_random_connex(s, 30, 30, (30*30)/3)
+    test_rectangle_complexity(s)
+    # fill_with_random_connex(s, 30, 30, (30*30))
     # fill_with_test_cases(s)
 
     # create the window, the canvas and the buttons
