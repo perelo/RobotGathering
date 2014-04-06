@@ -190,13 +190,11 @@ def generate_random_connex_space(height, width, n):
     shuffle(rpos)
 
     count = width*height
-    print 'n =', n
     while count > n and rpos:
         pos = rpos.pop()
         # turn off the bit
         s = s & ~(1 << pos)
         count -= 1
-        # print pos, count, bin(s)
         if not is_connex(s, count, width):
             # turn it back on
             s = s | (1 << pos)
@@ -270,10 +268,10 @@ def fill_with_test_cases(s):
         s.add_robots_from_test_case(t, li, col, i, j)
 
 
-def fill_with_random_connex(s):
-    li, col = 30, 30
-    r = generate_random_connex_space(li, col, (li*col)/4)
-    s.add_robots_from_test_case(r, li, col, 10, 10)
+def fill_with_random_connex(s, li, col, n):
+    print li, 'x', col, ', n =', n,
+    r = generate_random_connex_space(li, col, n)
+    s.add_robots_from_test_case(r, li, col, 0, 0)
 
 def remove_robot(view):
     def fct(event):
@@ -290,8 +288,8 @@ def add_robot(view):
 if __name__ == '__main__':
     s = Space()
 
-    # fill_with_random_connex(s)
-    fill_with_test_cases(s)
+    fill_with_random_connex(s, 30, 30, (30*30)/3)
+    # fill_with_test_cases(s)
 
     # create the window, the canvas and the buttons
     fenetre = Tk.Tk()
