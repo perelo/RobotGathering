@@ -267,6 +267,30 @@ def fill_with_test_cases(s):
         t, li, col = test
         s.add_robots_from_test_case(t, li, col, i, j)
 
+def fill_with_blocs_and_squares(s):
+    def b(m,n):
+        return gen_block(m,n), m, n
+    def r(m,n):
+        return gen_rect (m,n), m, n
+    displayed_test_cases = [
+        ( r(10,20),  1,  1 ),
+        ( b(10,20), 12,  1 ),
+        ( r(10,21),  1, 25 ),
+        ( b(10,21), 12, 25 ),
+        ( r(11,20), 26,  1 ),
+        ( b(11,20), 38,  1 ),
+        ( r(11,21), 26, 25 ),
+        ( b(11,21), 38, 25 ),
+        ( r(16,16),  1, 50 ),
+        ( b(16,16), 21, 50 ),
+        ]
+
+    # add the test_cases to the Space
+    for dtc in displayed_test_cases:
+        test, i, j = dtc
+        t, li, col = test
+        s.add_robots_from_test_case(t, li, col, i, j)
+
 
 def fill_with_random_connex(s, li, col, n):
     print li, 'x', col, ', n =', n,
@@ -320,9 +344,10 @@ def add_robot(view):
 if __name__ == '__main__':
     s = Space()
 
-    test_rectangle_complexity(s)
+    # test_rectangle_complexity(s)
     # fill_with_random_connex(s, 30, 30, (30*30))
     # fill_with_test_cases(s)
+    fill_with_blocs_and_squares(s)
 
     # create the window, the canvas and the buttons
     fenetre = Tk.Tk()
