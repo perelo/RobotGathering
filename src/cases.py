@@ -149,10 +149,11 @@ def create_end_cases():
     # /!\ Don't look the next paragraph !!! it's terrible, i'm ashamed...
     # anyway, it's completely unreadable, so no one will know how much it sucks
     end_cases = {}
-    for x in end_cases_x:
+    for i, x in enumerate(end_cases_x):
         for rotate in [_rotate0, _rotate90, _rotate180, _rotate270]:
+            rotate_sym = _rotate180 if i != 2 else _rotate270
             rx = rotate(x)
-            end_cases[rx[0]] = _rotate180(rx)[0]
+            end_cases[rx[0]] = rotate_sym(rx)[0]
     return end_cases
 
 def create_quincunx_cases():
