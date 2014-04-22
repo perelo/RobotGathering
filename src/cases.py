@@ -187,6 +187,46 @@ def create_quincunx_cases():
         quincunx_cases[rx[0]] = x[0]
     return quincunx_cases
 
+def create_quincunx_check():
+    quincunx_check = {}
+    xs = [
+
+         ((fmt('0 0 1' \
+               '1 1 0' \
+               '0 0 0'),(1,1)),
+          (fmt('0 0 1'\
+               '0 0 1' \
+               '0 0 0'), ( 0, 1))),
+
+         ((fmt('1 0 0' \
+               '0 1 1' \
+               '0 0 0'),(1,1)),
+          (fmt('1 0 0'\
+               '1 0 0' \
+               '0 0 0'), ( 0,-1))),
+
+         ((fmt('0 0 1' \
+               '1 1 0' \
+               '1 0 0'),(1,1)),
+          (fmt('0 0 1'\
+               '0 0 1' \
+               '0 0 0'), ( 0, 1))),
+
+         ((fmt('1 0 0' \
+               '0 1 1' \
+               '0 0 1'),(1,1)),
+          (fmt('1 0 0'\
+               '1 0 0' \
+               '0 0 0'), ( 0,-1))),
+
+         ]
+
+    for rotate in [_rotate0, _rotate90, _rotate180, _rotate270]:
+        for (x,y) in xs:
+            rx, ry = rotate(x), rotate(y)
+            quincunx_check[rx[0]] = ry
+    return quincunx_check
+
 def load_test_cases(fname):
     """ Read the file containing test cases
         ie portions of space with connected robots inside
@@ -214,3 +254,4 @@ test_cases = load_test_cases('../res/tests.txt')
 neighbors_cases, symetrics, discnx = load_mvt_cases('../res/cases.txt')
 end_cases = create_end_cases()
 quincunx_cases = create_quincunx_cases()
+quincunx_check = create_quincunx_check()

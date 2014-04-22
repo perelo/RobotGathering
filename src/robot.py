@@ -39,10 +39,20 @@ class Robot(tuple):
         if self.done:
             return self
 
-        # check for quincunxness, maybe we must not move this time
-        if cases.quincunx_cases.get(self.last_surrounding, -1) == surrounding:
+        surrounding = self.get_surroundings()
+
+        if self.is_bad_quincunx_case():
+            self.in_danger = cases.symetrics.get(surrounding,-1) in \
+                                                            cases.danger_cases
+            self.last_pos = self
             self.last_surrounding = surrounding
             return self
+
+#         # check for quincunxness, maybe we must not move this time
+#         if cases.quincunx_cases.get(self.last_surrounding, -1) == surrounding:
+#             self.last_pos = self
+#             self.last_surrounding = surrounding
+#             return self
 
         # compute the next position of the robot
         i, j = self
@@ -56,3 +66,15 @@ class Robot(tuple):
         r.last_pos = self
         r.last_surrounding = surrounding
         return r
+
+    def is_bad_quincunx_case(self):
+        bad = False
+        surrounding = self.get_surroundings()
+        if surrounding in cases.quincunx_check.keys():
+            (nbhs_to_check, mvt) = cases.quincunx_check[surrounding]
+            shifted_robot = (sum(x) for x in zip(self, mvt))
+            s = Robot.space.get_surroundings(*shifted_robot)
+            r = nbhs_to_check & s
+            # r is not 0 and a power of 2 if there is only 1 nbh checked
+            bad = r != 0 and (r & (r-1)) == 0
+        return bad
