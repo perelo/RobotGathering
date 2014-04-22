@@ -127,7 +127,7 @@ class Space(object):
         # compute all robot's next_positions
         next_robots = []
         for r in self.step_robots[self.step_index]:
-            r_next = r.next_position(self.get_surroundings(*r))
+            r_next = r.next_position()
             next_robots.append(r_next)
 
         # do the step, ie move all robots in the space
@@ -137,7 +137,7 @@ class Space(object):
         # some robots may be in danger, do another round to save them
         robots_safe = set()
         for r in next_robots:
-            r_next = r.save_from_danger(self.get_surroundings(*r))
+            r_next = r.save_from_danger()
             robots_safe.add(r_next)
         self.step_robots[self.step_index] = robots_safe
 

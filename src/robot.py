@@ -11,6 +11,8 @@ import cases
 
 class Robot(tuple):
 
+    space = None
+
     def __init__(self, b):
         super(Robot, self).__init__(tuple(b))
         self.last_surrounding = None
@@ -18,19 +20,22 @@ class Robot(tuple):
         self.in_danger = False
         self.done = False
 
+    def get_surroundings(self):
+        return Robot.space.get_surroundings(*self)
+
     def check_if_done(self, surrounding):
         # no neighbors, or in an end_case
         return surrounding == 16 or \
                surrounding == cases.end_cases.get(self.last_surrounding, -1)
 
-    def save_from_danger(self, surrounding):
+    def save_from_danger(self):
         # if we have been disconnected, move to last_pos
         if self.in_danger and \
-           surrounding & cases.discnx[self.last_surrounding] == 0:
+           self.get_surroundings() & cases.discnx[self.last_surrounding] == 0:
             return self.last_pos
         return self
 
-    def next_position(self, surrounding):
+    def next_position(self):
         if self.done:
             return self
 
