@@ -9,6 +9,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{geometry}
+\usepackage{amsthm}
 \usepackage[french, ruled]{algorithm2e}
 \geometry{margin=2cm}
 
@@ -39,6 +40,21 @@
     }
   \end{tikzpicture}
 }
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{cor}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{exmp}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Remark}
+\newtheorem*{note}{Note}
 
 \begin{document}
 
@@ -147,6 +163,22 @@ ronde. \\
   }
   \caption{}
 \end{algorithm}
+
+\subsection{Correctness}
+
+We define the \textit{bounding box} $BB(t)$ of the robots as the smallest
+enclosing rectangle (oriented with the grid's axes) which contains all robots
+at step $t$.
+
+\begin{lem}
+When following the algorithm described above, the bounding box of the robots is
+monotonically non-inflating, i.e., $BB(t+1) \subseteq BB(t)$ for all $t$.
+\end{lem}
+
+\begin{lem}
+If there is exactly one robot in the topmost row of the bounding box, then it
+moves down after at most a constant number of steps.
+\end{lem}
 
 \section{Calcul du temps de rassemblement dans le cas d'un bloc (draft)}
 
