@@ -341,14 +341,7 @@ def add_robot(view):
         view.update()
     return fct
 
-if __name__ == '__main__':
-    s = Space()
-
-    # test_rectangle_complexity(s)
-    # fill_with_random_connex(s, 30, 30, (30*30))
-    # fill_with_test_cases(s)
-    fill_with_blocs_and_squares(s)
-
+def display_space(s):
     # create the window, the canvas and the buttons
     fenetre = Tk.Tk()
     v = SpaceView(fenetre, s, 70, 50)
@@ -366,3 +359,14 @@ if __name__ == '__main__':
     btn_prev.pack()
     btn_clear.pack()
     fenetre.mainloop()
+
+if __name__ == '__main__':
+    s = Space()
+    Robot.space = s
+
+    # test_rectangle_complexity(s)
+    # fill_with_random_connex(s, 30, 30, (30*30))
+    # fill_with_test_cases(s)
+    fill_with_blocs_and_squares(s)
+
+    display_space(s)
