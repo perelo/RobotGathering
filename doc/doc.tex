@@ -21,6 +21,20 @@
 \author{\'Eloi Perdereau}
 %\date{}
 
+\newcommand{\spacee}[1] {
+  \begin{tikzpicture}[thick, scale=0.6]
+    \def \step {1}
+    \def \cc {\step/2}  % center of cell
+    \coordinate (offset) at ($(\cc,\cc)$);
+    \draw[step=\step] (0,0) grid ($(5,5)$);   % draw the grid, base at #1
+    % draw the neighbors
+    \foreach \coord in #1 {
+      \coordinate[at=\coord, name=A];
+      \draw ($(A) + (offset)$) circle ({\cc*0.8});
+    }
+  \end{tikzpicture}
+}
+
 \newcommand{\case}[2] {
   \begin{tikzpicture}[thick, scale=0.6]
     \def \step {1}
@@ -142,8 +156,8 @@ ronde. \\
     \eIf{$k \% 2 = 0$} {
       % test d'arrêt
       \If{$N_k$ is case $1.1.1$ or \\
-          ($N_k$ is case $1.1.2$ or $1.1.3$ or $1.3.2$ and
-          $N_{k-2} = sym(N_k)$)} {
+          ($N_k$ is case $1.1.2$ or $1.1.3$ and $N_{k-2}=rotate180(N_k)$) or \\
+          ($N_k$ is case $1.3.2$            and $N_{k-2}=rotate90 (N_k)$) } {
           $finish \leftarrow True$\;
           continue\;
       }
