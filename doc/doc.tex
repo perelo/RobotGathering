@@ -150,24 +150,38 @@ ronde. \\
 \subsection{Formalisation}
 \begin{algorithm}[H]
   $finish \leftarrow False$\;
+  $ok \leftarrow True$\;
   $k \leftarrow 0$\;
   \While{not $finish$} {
     $N_k \leftarrow get\_neighbors()$\;
-    \eIf{$k \% 2 = 0$} {
+    \uIf{$k \% 4 = 0$} {
+      \If{$N_k$ is case $1.2.4$ or $1.3.5$} {
+        move to $(i, j-1)$\;
+        $get\_neighbors()$\;
+        \If{$(i, j-2)$ or $(i+1, j-2)$ is not empty} {
+          $ok \leftarrow False$\;
+        }
+      }
+    }
+    \uElseIf{$k \% 4 = 1$} {
+      \If{$N_{k-1}$ is case $1.2.4$ or $1.3.5$} {
+        move to $(i, j+1)$\;
+      }
+    }
+    \uElseIf{$k \% 4 = 2$} {
       % test d'arrêt
-      \If{$N_k$ is case $1.1.1$ or \\
+      \uIf{$N_k$ is case $1.1.1$ or \\
           ($N_k$ is case $1.1.2$ or $1.1.3$ and $N_{k-2}=rotate180(N_k)$) or \\
           ($N_k$ is case $1.3.2$            and $N_{k-2}=rotate90 (N_k)$) } {
           $finish \leftarrow True$\;
-          continue\;
       }
-      % mouvement si non quinconce
-      \eIf{$N_k$ is case $1.2.3$ or $1.2.4$ and $N_{k-2} = sym(N_k)$} {
-        don't move (quincunx case)\;
-      } {
+      % mouvement si il n'y a personne en (i,j-2) ou (i+1,j-2)
+      \ElseIf{$ok = True$} {
         move according to $N_k$\;
       }
-    } {
+      $ok \leftarrow True$\;
+    }
+    \Else{
       \If{($N_{k-1}$ is case $1.2.4$ or $1.3.5$) and
           ($(i,j+1)$, $(i-1,j)$, $(i-1,j+1)$ are all empty)} {
           move to $(i-1,j)$\;
