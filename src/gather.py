@@ -15,6 +15,8 @@ import operator
 import cases
 from robot import Robot
 
+from collections import deque
+
 class SpaceView(Tk.Canvas):
 
     def __init__(self, master, space, width, height, cell_size=15):
@@ -206,7 +208,8 @@ def is_connex(s, sz, width):
     count = 0
     # start with the rightmost bit
     rmost_bit = s & (-s)
-    queue = [int(log(rmost_bit, 2))]
+    queue = deque()
+    queue.append(int(log(rmost_bit, 2)))
     while queue:   # while queue is not empty
         pos = queue.pop()
         if pos >= 0 and s & (1 << pos) != 0:    # if s has a robot at pos
@@ -216,17 +219,12 @@ def is_connex(s, sz, width):
             # add it's neighbors in the queue and continue
             if pos%width != 0:          # not on the right border
                 # add right neighbors
-                queue.append(pos+width-1)
-                queue.append(pos-1      )
-                queue.append(pos-width-1)
+                queue.extend((pos+width-1, pos-1, pos-width-1))
             if pos%width != width-1:    # not on the left border
                 # add left neighbors
-                queue.append(pos+width+1)
-                queue.append(pos+1      )
-                queue.append(pos-width+1)
+                queue.extend((pos+width+1, pos+1, pos-width+1))
             # add up and down neighbors
-            queue.append(pos+width)
-            queue.append(pos-width)
+            queue.extend((pos+width, pos-width))
     return count == sz
 
 def fill_with_test_cases(s):
