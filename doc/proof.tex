@@ -1,0 +1,131 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[english,francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\usepackage[french]{varioref}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{amsthm}
+\usepackage[french, ruled]{algorithm2e}
+\geometry{margin=2cm}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}   % coordinate calculation
+\usepackage{xifthen}
+
+\title{Correctness}
+\author{\'Eloi Perdereau}
+%\date{}
+
+\newcommand{\spacee}[2] {
+  \begin{tikzpicture}[thick, scale=0.6]
+    \def \step {1}
+    \def \cc {\step/2}  % center of cell
+    \coordinate (offset) at ($(\cc,\cc)$);
+    \draw[step=\step] (0,0) grid ($#1$);   % draw the grid, base at #1
+    % draw the neighbors
+    \foreach \coord in #2 {
+      \coordinate[at=\coord, name=A];
+      \draw ($(A) + (offset)$) circle ({\cc*0.8});
+    }
+  \end{tikzpicture}
+}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{cor}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{exmp}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Remark}
+\newtheorem*{note}{Note}
+
+\begin{document}
+
+\maketitle
+
+We define the \textit{bounding box} $BB(t)$ of the robots as the smallest
+enclosing rectangle (oriented with the grid's axes) which contains all robots
+at step $t$.
+
+\begin{prop}
+When following the algorithm described above, the bounding box of the robots is
+monotonically non-inflating, i.e., $BB(t+1) \subseteq BB(t)$ for all $t$.
+\end{prop}
+
+\section{A single robot on the topmost row}
+
+We note $r(k)$ the single robot in the topmost row of the bounding box at step
+$t$. If there are more than one robot, $r$ is not defined.
+
+\begin{prop}
+If $r(k)$ exists and is at column $i$, then $r(k-1)$ exist and is at column
+$i-1$, $i$ or $i+1$.
+\end{prop}
+
+\begin{lem}
+If $r(k)$ exists and there are at least three robots in the space (it is not an
+end case), then for a constant $c$, either $r(k+c)$ doesn't exist or there are
+only two cells left filled with robots in the space.
+\end{lem}
+
+\begin{proof}
+
+The graph of figure \ref{graph:single} is defined as follows :
+\begin{itemize}
+  \item Nodes : Possible cases for a single robot $(i,j)$ on the topmost row.
+  \item Edge $(u,v)$ if $u$ can lead to $v$ at $t+1$ for any robot on row $i$.
+\end{itemize}
+
+We can see that there is a cycle from case $1.2.1$ (call it $a$) to $1.2.3$
+(call it $b$). So theoretically the robot on the topmost row could cycle
+indefinitely. We show that this is not true :
+
+The only cases where we pass through $(a,b)$ are : \\
+\spacee {(7, 5)} {{(1, 0),(3, 1),(2, 1),(3, 2)}}
+\spacee {(7, 5)} {{(1, 0),(0, 0),(3, 1),(2, 1),(3, 2)}}
+\spacee {(7, 5)} {{(3, 1),(2, 1),(1, 1),(3, 2)}}
+\\
+
+Reciprocally for $(b,a)$ : \\
+\spacee {(7, 5)} {{(5, 1),(4, 1),(3, 1),(3, 2)}}
+\spacee {(7, 5)} {{(5, 0),(4, 1),(3, 1),(3, 2)}}
+\spacee {(7, 5)} {{(6, 0),(5, 0),(4, 1),(3, 1),(3, 2)}}
+\\
+
+It is obvious that whenever the robot pass through one of the edges of the
+cycle at $t$, it can't pass through the other one at $t+1$.
+
+\end{proof}
+
+\begin{figure}
+\includegraphics[scale=0.50]{graph_single_robot_persist_left_or_right.jpg}
+\caption{Single robot}
+\label{graph:single}
+\end{figure}
+
+\section{More than one robot on the topmost row}
+
+\begin{figure}
+\includegraphics[scale=0.50]{graph_robot_persists.jpg}
+\caption{Persistent cases}
+\label{graph:persist}
+\end{figure}
+
+\begin{figure}
+\includegraphics[scale=0.50, angle=90]{graph_robot_go_left.jpg}
+\caption{"Go-left" cases}
+\label{graph:go-left}
+\end{figure}
+
+\end{document}
