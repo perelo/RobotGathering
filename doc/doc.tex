@@ -21,14 +21,14 @@
 \author{\'Eloi Perdereau}
 %\date{}
 
-\newcommand{\spacee}[1] {
+\newcommand{\spacee}[2] {
   \begin{tikzpicture}[thick, scale=0.6]
     \def \step {1}
     \def \cc {\step/2}  % center of cell
     \coordinate (offset) at ($(\cc,\cc)$);
-    \draw[step=\step] (0,0) grid ($(5,5)$);   % draw the grid, base at #1
+    \draw[step=\step] (0,0) grid ($#1$);   % draw the grid, base at #1
     % draw the neighbors
-    \foreach \coord in #1 {
+    \foreach \coord in #2 {
       \coordinate[at=\coord, name=A];
       \draw ($(A) + (offset)$) circle ({\cc*0.8});
     }
