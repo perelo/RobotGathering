@@ -1,7 +1,7 @@
 # project-wide
 doc/*
-!doc/doc.pdf
-!doc/doc.tex
+!doc/*.pdf
+!doc/*.tex
 
 *.py[cod]
 
