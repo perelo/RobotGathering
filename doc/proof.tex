@@ -65,18 +65,18 @@ monotonically non-inflating, i.e., $BB(t+1) \subseteq BB(t)$ for all $t$.
 
 \section{A single robot on the topmost row}
 
-We note $r(k)$ the single robot in the topmost row of the bounding box at step
-$t$. If there are more than one robot, $r$ is not defined.
+We note $r(t)$ the single robot in the topmost row of the bounding box at step
+$t$. If there are more than one robot, $r(t)$ is not defined.
 
 \begin{prop}
-If $r(k)$ exists and is at column $i$, then $r(k-1)$ exist and is at column
-$i-1$, $i$ or $i+1$.
+If $r(t)$ exists and is on $(0,i)$, then there is a robot on $(0,i-1)$, $(0,i)$
+or $(0,i+1)$ at step $t-1$.
 \end{prop}
 
 \begin{lem}
-If $r(k)$ exists and there are at least three robots in the space (it is not an
-end case), then for a constant $c$, either $r(k+c)$ doesn't exist or there are
-only two cells left filled with robots in the space.
+If $r(t)$ exists and there are at least three robots in the space, then after a
+constant number of steps, either $BB(t+c) \subset BB(t)$ (the topmost row moves
+down) or it becomes an end case
 \end{lem}
 
 \begin{proof}
