@@ -65,6 +65,13 @@ def unfmt(x):
 def case_of(x, i, j):
     return extract_matrix(x,5,7,3,3,i-1,j-1)
 
+def print_tex(x, m, n):
+    robots = []
+    for i in xrange(m*n):
+        if x & (1 << i) != 0:
+            robots.append(str(((n - (i%n) -1), (i/n))))
+    print('\\spacee {', (n,m), '} {{', ','.join(robots), '}}', sep='')
+
 if __name__ == '__main__':
 
     m, n = 5, 7
@@ -117,23 +124,10 @@ if __name__ == '__main__':
 
 #     # latex
 #     for x, next_steps in bad_cases:
-#     # for s in gen_surrounding(m, n, *c[0]):
-#         m, n = 3, 3
-#         robots = []
-#         for i in xrange(m*n):
-#             if x & (1 << i) != 0:
-#                 # robots.append(str(((n - (i%n) -1), (i/n))))
-#                 robots.append(str(((n - (i%n) -1), (i/n))))
-#         print('\\spacee {', (n,m), '} {{', ','.join(robots), '}}', sep='')
+#         print_tex(x, 3, 3)
 #         print('\\\\\n')
-
-#         m, n = 5,7
 #         for y in next_steps:
-#             robots = []
-#             for i in xrange(m*n):
-#                 if y & (1 << i) != 0:
-#                     robots.append(str(((n - (i%n) -1), (i/n))))
-#             print('\\spacee {', (n,m), '} {{', ','.join(robots), '}}', sep='')
+#             print_tex(y, 5, 7)
 #         if next_steps:
 #             print('\\\\\n')
 
