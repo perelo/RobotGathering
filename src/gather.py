@@ -18,14 +18,11 @@ from collections import deque
 class Space(object):
 
     def __init__(self):
-        self.step_robots = [set()]      # list of sets of robots (history)
-        self.robots_finish = dict()     # True if finish, False otherwise
-        self.step_index = 0
-        self.quescient_step_index = float('inf')
+        self.clear()
 
     def clear(self):
         self.step_robots = [set()]      # list of sets of robots (history)
-        self.robots_finish = dict()     # True if finish, False otherwise
+        self.robots_finish = set()      # set of finished robots
         self.step_index = 0
         self.quescient_step_index = float('inf')
 
@@ -33,7 +30,7 @@ class Space(object):
         return self.quescient_step_index == self.step_index
 
     def is_robot_finish(self, i, j):
-        return self.robots_finish.get(((i,j), self.step_index), False)
+        return ((i,j), self.step_index) in self.robots_finish
 
     def get_robots(self):
         return self.step_robots[self.step_index]
@@ -47,43 +44,40 @@ class Space(object):
             res |= 1 << (w * (h-i-1)) + (w-j-1)
         return res
 
-    def next_step(self):
-        # check if we have reached a quescient state
-        if self.step_index >= self.quescient_step_index:
-            return
+    def next_step(self, fast=False):
 
-        # check, maybe we have already computed the next step
-        if self.step_index +1 < len(self.step_robots):
-            self.step_index += 1
-            return
+        if not fast:
+            # check if we have reached a quescient state
+            if self.step_index >= self.quescient_step_index:
+                return
+
+            # check, maybe we have already computed the next step
+            if self.step_index +1 < len(self.step_robots):
+                self.step_index += 1
+                return
 
         # compute all robot's next_positions
-        next_robots = []
-        for r in self.step_robots[self.step_index]:
-            r_next = r.next_position()
-            next_robots.append(r_next)
+        next_robots = map(Robot.next_position, self.get_robots())
 
         # do the step, ie move all robots in the space
         self.step_robots.append(set(next_robots))
         self.step_index += 1
 
         # some robots may be in danger, do another round to save them
-        robots_safe = set()
-        for r in next_robots:
-            r_next = r.save_from_danger()
-            robots_safe.add(r_next)
-        self.step_robots[self.step_index] = robots_safe
+        robots_safe = map(Robot.save_from_danger, next_robots)
+        self.step_robots[self.step_index] = set(robots_safe)
 
-        # some robots may have done, note and count them
-        nb_done_robots = 0
-        for r in self.step_robots[self.step_index]:
-            if r.check_if_done(self.get_surroundings(*r)):
-                nb_done_robots += 1
-                self.robots_finish[(r, self.step_index)] = True
+        if not fast:
+            # some robots may have done, note and count them
+            nb_done_robots = 0
+            for r in self.step_robots[self.step_index]:
+                if r.check_if_done(self.get_surroundings(*r)):
+                    nb_done_robots += 1
+                    self.robots_finish.add((r, self.step_index))
 
-        # maybe we are globally quescient
-        if nb_done_robots >= len(self.step_robots[self.step_index]):
-            self.quescient_step_index = self.step_index
+            # maybe we are globally quescient
+            if nb_done_robots >= len(self.step_robots[self.step_index]):
+                self.quescient_step_index = self.step_index
 
     def prev_step(self):
         if self.step_index > 0:
