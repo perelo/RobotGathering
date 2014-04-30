@@ -22,14 +22,12 @@ class Space(object):
         self.robots_finish = dict()     # True if finish, False otherwise
         self.step_index = 0
         self.quescient_step_index = float('inf')
-        self.robots_quincunx = set()
 
     def clear(self):
         self.step_robots = [set()]      # list of sets of robots (history)
         self.robots_finish = dict()     # True if finish, False otherwise
         self.step_index = 0
         self.quescient_step_index = float('inf')
-        self.robots_quincunx = set()
 
     def is_quescient(self):
         return self.quescient_step_index == self.step_index
