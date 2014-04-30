@@ -102,15 +102,16 @@ if __name__ == '__main__':
     Robot.space.clear()
 
     # dot
-    labelized = {}
+    labelized = set()
     print('digraph g {')
     for x, next_step in bad_cases:
-        print(x, ' [label=', unfmt(x), ']', sep='')
-        labelized[x] = True
+        if x not in labelized:
+            print(x, ' [label=', unfmt(x), ']', sep='')
+            labelized.add(x)
         for y in next_step:
             if y not in labelized:
-                print(y, ' [label=', unfmt(y), ']', sep='')
-                labelized[y] = True
+                print(y, ' [lbl=', unfmt(y), ']', sep='')
+                labelized.add(y)
             print(x, ' -> ', y, ';', sep='')
     print('}')
 
