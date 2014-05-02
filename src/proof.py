@@ -16,18 +16,31 @@ from gather import *
 from robot import *
 from leftmost import leftmost_nbh_cases
 
-def gen_surrounding(m, n, presents, not_presents):
+def gen_surrounding(pos, m, n, case, is_single):
     if m <= 0 or n <= 0:
         return
-    sz = 1 << (m*n)
-    for i in range(1, sz):
-        # all '1's in *presents* must be in i
-        # none of '1's in *not_presents* must be in i
-        # i must be connex
-        if i & presents == presents and \
-           i & not_presents == 0 and \
-           is_connex(i, bin(i).count('1'), n):
-            yield i
+
+    nb_left = 4
+    if is_single:
+        nb_left -= pos
+
+    nb_right = (m-1)*n + pos
+
+    case_btm_row_mask = ( case       & 7) << nb_right
+    case_mid_row_mask = ((case >> 3) & 7) << nb_right +   n
+    case_top_row_mask = ((case >> 6) & 7) << nb_right + 2*n
+
+    left_shift = nb_right + 3
+
+    for left in xrange(1 << nb_left):
+
+        left_mask = left << left_shift
+        for right_mask in xrange(1 << nb_right):
+
+            x = right_mask | case_btm_row_mask | left_mask | case_mid_row_mask
+
+            if is_connex(x, bin(x).count('1'), n):
+                yield x
 
 def extract_matrix(x, M, N, m, n, i, j):
     """ Extract from x (size M*N) the submatrix located at (i,j) (size m*n)
@@ -79,32 +92,27 @@ if __name__ == '__main__':
     Robot.space = Space()
 
     bad_cases = []
-    for presents, not_presents in leftmost_nbh_cases:
+    for case in leftmost_nbh_cases:
         cpt, bad = 0, 0
-        g = gen_surrounding(m-2, n, presents, not_presents)
-        next_cases = set()
-        for x in g:
-            Robot.space.clear()
-            Robot.space.add_robots_from_test_case(x, m, n, 0, 0)
-            Robot.space.next_step()
-            y = Robot.space.get_robots_bin(n, m)
-            rs = Robot.space.get_robots()
-            if len(rs) <= 2:
-                continue
-            for undesirable_robot in [ (2,4),(2,2),(2,3) ]:
-                a, b = undesirable_robot
-                if undesirable_robot in rs :#and \
-       # case_of(y,*undesirable_robot) == case_of(leftmost_nbh_cases[0][0],2,3):
-                    next_cases.add(case_of(y,*undesirable_robot))
+        for pos in [LEFT, MID, RIGHT]:
+            g = gen_surrounding(pos, m-2, n, case, True)
+            next_cases = set()
+            for x in g:
+                Robot.space.clear()
+                Robot.space.add_robots_from_test_case(x, m, n, 0, 0)
+                Robot.space.next_step(fast='True')
+                rs = Robot.space.get_robots()
+                if len(rs) > 2 and (1,3) in rs:
+                    y = Robot.space.get_robots_bin(n, m)
+                    next_cases.add(case_of(y,1,3))
+                    # if case_of(y,1,3) == leftmost_nbh_cases[1]:
+                    #     bad_cases.append((case,[x]))
+                    #     break
                     # next_cases.add(x)
-            # if y & next_step_presents != next_step_presents or \
-            #    y & next_step_not_presents != 0:
-            #     bad_cases.append(x)
-            #     bad += 1
-            cpt += 1
-        cur_case = extract_matrix(presents, m, n, 3, 3, 1, 2)
-        bad_cases.append((cur_case, next_cases))
-        # print(bad, 'over', cpt)
+                    # bad += 1
+                cpt += 1
+            bad_cases.append((case, next_cases))
+            print(bad, 'over', cpt)
 
     Robot.space.clear()
 
