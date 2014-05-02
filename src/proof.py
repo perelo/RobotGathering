@@ -19,7 +19,7 @@ def gen_surrounding(pos, m, n, case, is_single):
     if m <= 0 or n <= 0:
         return
 
-    nb_left = 4
+    nb_left = n-3
     if is_single:
         nb_left -= pos
 
