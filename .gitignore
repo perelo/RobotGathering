@@ -2,6 +2,7 @@
 doc/*
 !doc/*.pdf
 !doc/*.tex
+!doc/*.jpg
 
 *.py[cod]
 
