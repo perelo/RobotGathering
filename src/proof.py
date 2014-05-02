@@ -11,10 +11,9 @@ __date__ = '23-04-2014'
 
 from collections import defaultdict
 
-import cases
+from cases import neighbors_cases
 from gather import *
 from robot import *
-from leftmost import leftmost_nbh_cases
 
 def gen_surrounding(pos, m, n, case, is_single):
     if m <= 0 or n <= 0:
@@ -85,6 +84,16 @@ def print_tex(x, m, n):
             robots.append(str(((n - (i%n) -1), (i/n))))
     print('\\spacee {', (n,m), '} {{', ','.join(robots), '}}', sep='')
 
+
+single_mask   = cases.fmt('1 1 1' \
+                          '1 0 1' \
+                          '0 0 0')
+leftmost_mask = cases.fmt('1 1 1' \
+                          '1 0 0' \
+                          '0 0 0')
+single_cases   = filter(lambda x: x&  single_mask == 0, neighbors_cases.keys())
+leftmost_cases = filter(lambda x: x&leftmost_mask == 0, neighbors_cases.keys())
+
 if __name__ == '__main__':
 
     m, n = 5, 7
@@ -92,7 +101,7 @@ if __name__ == '__main__':
     Robot.space = Space()
 
     bad_cases = []
-    for case in leftmost_nbh_cases:
+    for case in leftmost_cases:
         cpt, bad = 0, 0
         for pos in [LEFT, MID, RIGHT]:
             g = gen_surrounding(pos, m-2, n, case, True)
@@ -105,7 +114,7 @@ if __name__ == '__main__':
                 if len(rs) > 2 and (1,3) in rs:
                     y = Robot.space.get_robots_bin(n, m)
                     next_cases.add(case_of(y,1,3))
-                    # if case_of(y,1,3) == leftmost_nbh_cases[1]:
+                    # if case_of(y,1,3) == leftmost_cases[1]:
                     #     bad_cases.append((case,[x]))
                     #     break
                     # next_cases.add(x)
