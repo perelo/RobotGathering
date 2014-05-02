@@ -70,9 +70,10 @@ class Robot(tuple):
     def is_bad_quincunx_case(self):
         bad = False
         surrounding = self.get_surroundings()
-        if surrounding in cases.quincunx_check.keys():
-            (nbhs_to_check, mvt) = cases.quincunx_check[surrounding]
-            shifted_robot = (sum(x) for x in zip(self, mvt))
+        if surrounding in cases.quincunx_check:
+            (nbhs_to_check, (di, dj)) = cases.quincunx_check[surrounding]
+            i, j = self
+            shifted_robot = (i+di, j+dj)
             s = Robot.space.get_surroundings(*shifted_robot)
             r = nbhs_to_check & s
             # r is not 0 and a power of 2 if there is only 1 nbh checked
