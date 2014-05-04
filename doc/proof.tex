@@ -10,6 +10,7 @@
 \usepackage{amssymb}
 \usepackage{geometry}
 \usepackage{amsthm}
+\usepackage{enumerate}
 \usepackage[french, ruled]{algorithm2e}
 \geometry{margin=2cm}
 
@@ -69,9 +70,12 @@ We note $r(t)$ the single robot in the topmost row of the bounding box at step
 $t$. If there are more than one robot, $r(t)$ is not defined.
 
 \begin{prop}
-If $r(t)$ exists and is on $(0,i)$, then there is a robot on $(0,i-1)$, $(0,i)$
+If $r(t)$ exists and is on $(0,i)$, then there was a robot on $(0,i-1)$, $(0,i)$
 or $(0,i+1)$ at step $t-1$.
 \end{prop}
+
+This shows that studying the neighborhood of $r(t)$ for new robots on the
+topmost row is enough for the whole row.
 
 \begin{lem}
 If $r(t)$ exists and there are at least three robots in the space, then after a
@@ -81,30 +85,42 @@ down) or it becomes an end case
 
 \begin{proof}
 
-The graph of figure \ref{graph:single} is defined as follows :
+We define the graph $G_{single}(V_{single}, E_{single})$ as follows :
 \begin{itemize}
-  \item Nodes : Possible cases for a single robot $(i,j)$ on the topmost row.
-  \item Edge $(u,v)$ if $u$ can lead to $v$ at $t+1$ for any robot on row $i$.
+  \item $V_{single}$ : neighborhood cases of $r(t)$
+  \item $(u,v) \in E_{single}$ if $u$ can lead to $v$ at $t+1$ for any robot on
+        row $i$, and $t+1$ is not an end case.
 \end{itemize}
+The graph have been generated and is shown on figure \ref{graph:single}. We
+notice multiple cycles, i.e. row $0$ might never move down. However, edges are
+only representative for one step. In other words, there are paths that $r(t)$
+cannot go through. We will study 4 of them and it will be enough to prove that
+$BB(t+c) \subset BB(t)$. \\
 
-We can see that there is a cycle from case $1.2.1$ (call it $a$) to $1.2.3$
-(call it $b$). So theoretically the robot on the topmost row could cycle
-indefinitely. We show that this is not true :
-
-The only cases where we pass through $(a,b)$ are : \\
-\spacee {(7, 5)} {{(1, 0),(3, 1),(2, 1),(3, 2)}}
-\spacee {(7, 5)} {{(1, 0),(0, 0),(3, 1),(2, 1),(3, 2)}}
-\spacee {(7, 5)} {{(3, 1),(2, 1),(1, 1),(3, 2)}}
-\\
-
-Reciprocally for $(b,a)$ : \\
-\spacee {(7, 5)} {{(5, 1),(4, 1),(3, 1),(3, 2)}}
-\spacee {(7, 5)} {{(5, 0),(4, 1),(3, 1),(3, 2)}}
-\spacee {(7, 5)} {{(6, 0),(5, 0),(4, 1),(3, 1),(3, 2)}}
-\\
-
-It is obvious that whenever the robot pass through one of the edges of the
-cycle at $t$, it can't pass through the other one at $t+1$.
+\noindent
+Note $A$ to $G$ the 7 nodes of $G_{single}$ from top to bottom and left to
+right. \\
+Left moves are when $r(t) > r(t+1)$, mid moves and right moves are defined
+analogously. \\
+The middle robot in the start node is at $(0,0)$ at $t$.
+\begin{itemize}
+  \item path($D \rightarrow A \rightarrow B$) : $D \rightarrow A$ and $A
+  \rightarrow B$ are respectively a left and a right move.
+  \begin{enumerate}[a.]
+    \item In order to have $(0,-1)$ filled at $t+1$, $(0,1)$ must be on case
+          $1.2.6$ ($-90^{\circ}$) at $t$. So $(1,-1)$, $(1,0)$ and $(1,1)$ are
+          empty at $t$.
+    \item Giving a., in order to have $(1,-1)$ empty at $t+1$, $(1,-1)$ must be
+          on case $1.3.5$ at $t$. So at $t+1$, $(2,-1)$ will be filled.
+    \item[c1.] In order to have $(0,0)$ filled at $t+2$, $(0,1)$ must be on case
+          $1.2.5$ or $1.3.6$ (both $+180^{\circ}$). Which is impossible because
+          of b.
+    \item[c2.] Giving b., there is no way $(0,0)$ can be filled at $t+2$.
+  \end{enumerate}
+  Therefore if $r(t)$ pass through $D \rightarrow A$, $r(t+1)$ cannot pass
+  through $A \rightarrow B$. This invalidates all cycles involving both $D$ and
+  $A$.
+\end{itemize}
 
 \end{proof}
 
