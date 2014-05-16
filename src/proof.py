@@ -41,6 +41,8 @@ def gen_surrounding(pos, m, n, case, is_single):
             if is_connex(x, bin(x).count('1'), n):
                 yield x
 
+LEFT, MID, RIGHT = 1, 2, 3
+
 def extract_matrix(x, M, N, m, n, i, j):
     """ Extract from x (size M*N) the submatrix located at (i,j) (size m*n)
     """
@@ -134,7 +136,7 @@ if __name__ == '__main__':
             labelized.add(x)
         for y in next_step:
             if y not in labelized:
-                print(y, ' [lbl=', unfmt(y), ']', sep='')
+                print(y, ' [label=', unfmt(y), ']', sep='')
                 labelized.add(y)
             print(x, ' -> ', y, ';', sep='')
     print('}')
