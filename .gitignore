@@ -2,7 +2,7 @@
 doc/*
 !doc/*.pdf
 !doc/*.tex
-!doc/*.jpg
+!doc/graph_images/
 
 *.py[cod]
 
