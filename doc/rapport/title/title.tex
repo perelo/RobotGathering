@@ -1,0 +1,54 @@
+\makeatletter
+
+\renewcommand\maketitle{
+  \begin{titlepage}
+    \begin{center}
+      \includegraphics[width=7.2cm]{title/images/logo_AMU.png}
+      \hspace{\stretch{1}}
+      \includegraphics[width=7.2cm]{title/images/logo_LIF.png}
+
+    \vspace{\stretch{0.2}}
+
+      \begin{tabular*}{1.0\textwidth}{l @{\extracolsep{\fill}} r}
+          Département Informatique et Interactions & \NomEntreprise \\
+          TER \@date                               & Marseille      \\
+      \end{tabular*}
+
+    \vspace{\stretch{1.5}}
+
+      {\large \bf Rapport de Travail Encadré de Recherche \\}
+      \vspace{0.5cm}
+      {\LARGE \bf \@title\\}
+      \vspace{0.5cm}
+      {\large \it \@author\\}
+
+    \vspace{\stretch{2}}
+      \includegraphics[width=1.0\textwidth]{title/images/logo_illustration.png}
+    \vspace{\stretch{2}}
+
+      \begin{tabular}{rl}
+        \textit{Tuteur}~:          & Shantanu Das  \\
+        \textit{Responsable TER}~: & Omar Boucelma \\
+      \end{tabular}
+
+%       \begin{tabular*}{1.0\textwidth}{|l @{\extracolsep{\fill}} r|}
+%         \hline
+%           Tuteurs :             & Option : (sigle développé)  \\
+%           &\\
+%           \textit{ECL} :        &                             \\
+%           Nom, Prénom Tuteur 1  & Filière : (sigle développé) \\
+%           Nom, Prénom Tuteur 2  &                             \\
+%           &\\
+%           \textit{Entreprise} : &                             \\
+%           Nom, Prénom Tuteur 1  & Métier : (sigle développé)    \\
+%           Nom, Prénom Tuteur 2  &                             \\
+%         \hline
+%       \end{tabular*}
+
+    \end{center}\par
+
+  \end{titlepage}
+  \setcounter{footnote}{0}
+}
+
+\makeatother
