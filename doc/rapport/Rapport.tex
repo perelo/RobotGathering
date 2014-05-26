@@ -6,7 +6,7 @@
 % Paternité-Partage des Conditions Initiales  l'Identique 3.0 Unported"
 % http://creativecommons.org/licenses/by/3.0/
 
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt]{article}
 \input{style/packages.tex}
 
 % Comment utiliser :
@@ -18,33 +18,33 @@
 % - les variables suivantes sont à remplir :
 \newcommand{\TitreRapport}{Rassemblement d'agents mobiles}
 \newcommand{\DateRapport}{Mai 2014}
-\newcommand{\AuteurRapport}{\'Eloi Perdereau}
-\newcommand{\NomEntreprise}{Laboratoire d'informatique fondamentale}
+\newcommand{\AuteurRapport}{Eloi Perdereau}
 
 \input{style/style.tex}
 \input{title/title.tex}
+\input{figures/newcommand.tex}
+
+\newcommand{\GatheringProblem}{\ensuremath{\textsc{Gathering Problem}}\xspace}
 
 \begin{document}
 \pagestyle{fancy}
 
 \maketitle
     \newpage
-\input{body/pages/remerciements.tex}
-    \newpage
-\input{body/pages/abstract-fr.tex}
-    \newpage
-\input{body/pages/abstract-en.tex}
+\input{body/pages/abstract.tex}
     \newpage
 \tableofcontents
-        \newpage
-\listoffigures
-\listoftables
     \newpage
 \input{body/pages/introduction.tex}
-        \newpage
-\input{body/pages/titre1/titre1.tex}
-        \newpage
-\input{body/pages/titre2/titre2.tex}
+    % \newpage
+% \listoffigures
+% \listoftables
+    \newpage
+\input{body/pages/presentation_sujet.tex}
+    \newpage
+\input{body/pages/outils.tex}
+    \newpage
+\input{body/pages/travail_realise.tex}
     \newpage
 \input{body/pages/conclusion.tex}
     \newpage
@@ -52,6 +52,11 @@
 \bibliography{biblio}
     \newpage
 \appendix
-\input{appendix/titreA.tex}
+\input{figures/algo.tex}
+\input{figures/oscillation.tex}
+\input{figures/deconnexion.tex}
+\input{figures/quescient.tex}
+\input{figures/cas_mvt.tex}
+\input{figures/cas.tex}
 
 \end{document}

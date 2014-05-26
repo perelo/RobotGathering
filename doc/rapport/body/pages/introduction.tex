@@ -1,3 +1,41 @@
 \section*{Introduction}
 \addcontentsline{toc}{section}{Introduction}
-Insérez ici votre introduction.
+Dans le cadre de ma première année de Master informatique à Aix-Marseille
+Univsersité (site de Luminy), je suis amené à faire un projet (TER) encadré par
+un chercheur d'AMU ou un stage en entreprise. Ayant plus une vocation liée à la
+recherche, je me suis orienté vers un projet mêlant programmation et théorie
+fondamentale. \\
+
+Le projet rentre dans le domaine de l'algorithmique distribuée~; branche de
+l'informatique théorique dont le but est de développer des algorithmes pour des
+systèmes distribués impliquant plusieurs processus interconnectés par un
+réseau. Ces processus indépendants interagissent et coopèrent entre eux en vue
+de réaliser une tâche donnée.  L'idée principal du calcul distribué est que les
+processus communiquent entre eux par l'envoi de messages. Néanmoins, nous nous
+intéressons ici à un paradigme légèrement différent : les \textit{agents
+mobiles}. Ce sont des programmes qui peuvent se déplacer de n\oe{}uds en
+n\oe{}uds à l'intérieur du réseau de manière autonome. Bien qu'ils peuvent être
+implémentés via le modèle précédent (et font donc parti du calcul distribué),
+ils fournissent une abstraction plutôt naturelle pour le développement
+d'algorithmes tels que la détection d'intrus, l'exploration d'un réseau
+inconnu, ou encore la formation d'un motif par des robots (\textit{robot
+pattern formation problem}). Ce dernier problème consiste à arranger les robots
+dans le plan pour qu'ils forment et conservent un motif donné. \\
+
+L'objectif ici est de développer et d'implémenter une solution pour un cas
+particulier de ce problème~: le rassemblement d'agents mobiles. Aussi appelé le
+\GatheringProblem, beaucoup de contributions y ont déjà été apporté, impliquant
+souvent un plan continu ou une visibilité infinie. Nous nous restreignons ici à
+un espace discret et une visibilité constante robots. De plus, le système est
+synchrone, c'est à dire qu'il existe une horloge globale partagée par tous les
+processus. Autrement dit, les algorithmes fonctionneront par \textit{rondes}
+(ou \textit{étapes}.) Pour notre cas, cela signifie que tous les robots
+décident et se déplacent en même temps. Concernant la programmation, j'ai
+utilisé le langage Python avec la librairie TKinter pour l'interface graphique.
+\\
+
+Dans un premier temps je vais vous présenter plus en détail le sujet et les
+outils utilisés~; puis je vous exposerais le travail que j'ai réalisé
+développant les différentes étapes de recherche d'un algorithme correct ainsi
+que les techniques d'implémentation utilisés. Enfin, je conclurai par un bilan
+personnel et professionnel.

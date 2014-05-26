@@ -1,0 +1,35 @@
+\usetikzlibrary{calc}   % coordinate calculation
+
+\newcommand{\defstuff} {
+  \def \step {1}
+  \def \cc {\step/2}  % center of cell
+  \coordinate (offset) at ($(\cc,\cc)$);
+}
+
+\newcommand{\drawgrid}[1] {
+  \draw[step=\step, color=gray] (0,0) grid ($#1$); % draw the grid, base at #1
+}
+
+\newcommand{\drawrobots}[1] {
+    \foreach \coord in #1 {
+      \coordinate[at=\coord, name=A];
+      \draw ($(A) + (offset)$) circle ({\cc*0.8});
+    }
+}
+
+\newcommand{\drawarrows}[1] {
+    \foreach \a/\b in #1 {
+      \coordinate[at=\a, name=A];
+      \coordinate[at=\b, name=B];
+      \draw[->, color=darkgray] ($(A) + (offset)$) -- ($(B) + (offset)$);
+    }
+}
+
+\newcommand{\spacee}[3] {
+  \begin{tikzpicture}[thick, scale=0.6]
+    \defstuff
+    \drawgrid{#1}
+    \drawrobots{#2}
+    \drawarrows{#3}
+  \end{tikzpicture}
+}

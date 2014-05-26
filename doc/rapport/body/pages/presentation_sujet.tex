@@ -1,0 +1,125 @@
+\newcommand{\Observer}{\textit{Observer}\xspace}
+\newcommand{\Calculer}{\textit{Calculer}\xspace}
+\newcommand{\SeDeplacer}{\textit{Se\_déplacer}\xspace}
+
+\section{Cadre du projet}
+
+\subsection{Présentation du sujet}
+
+Bien que le problème ne soit théorique, nous modélisons un système plus ou
+moins réaliste qui pourrait émerger d'applications pratiques. Néanmoins, nous
+allons nous concentrer sur le développement d'un algorithme correct pour
+résoudre le problème posé sans se soucier des cas pratiques.
+
+Comme énoncé dans l'introduction, nous nous plaçons dans le cadre d'un univers
+discret. C'est à dire que le plan peut être représenté par un graphe simple
+non-orienté où chaque sommet possède 8 voisins différentiables par leur
+coordonnées relatives au sommet considéré. Les entités mobiles (ou robots) sont
+modélisés comme des unités de calcul ayant une mémoire locale et sont capables
+d'effectuer des calculs locaux. Les robots sont placés dans le plan et sont
+représentés par des points de $\mathbb{N}^2$. Ils sont capables de se déplacer
+librement dans l'espace de manière synchrone et sont dotés de capacités
+sensorielles leur permettant d'observer la position de leur voisin à un instant
+$t$. Plus formellement, les robots effectuent en permanence une succession de
+trois opérations~:
+\begin{enumerate}[(i)]
+  \item \Observer. Le robot observe son voisinage en activant ses
+  capteurs qui lui renvoient un instantané des positions des robots à
+  l'intérieur de son champ de visibilité.
+  \item \Calculer. Le robot effectue un calcul local donné par
+  l'algorithme. Le résultat de ce calcul est un point de destination (à
+  distance au plus 1 du robot concerné). Si ce point est la position du robot,
+  celui-ci ne se déplace pas.
+  \item \SeDeplacer. Le robot se déplace à la position renvoyée par le
+  calcul. \\
+\end{enumerate}
+La séquence \Observer-\Calculer-\SeDeplacer constitue un cycle de calcul. On
+définit plusieurs contraintes et suppositions sur les robots dont il faut nous
+soumettre.
+
+\paragraph{Synchronicité} Le temps passé pour \Observer, \Calculer et
+\SeDeplacer est le même pour tous les robots. De plus, ils commencent à
+\Observer en même temps.
+
+\paragraph{Pas de communication directe entre les robots} Certains modèles
+permettent l'envoi de messages entre les robots en plus de leur déplacement.
+Cela est en effet assez réaliste si les robots sont considérés sont des
+machines électroniques avec des capacités de communications et un protocole
+défini. Néanmoins, nous n'autorisons ici qu'une communication indirecte avec
+leur positions relatives.
+
+\paragraph{Visibilité limitée} Les robots ne sont capables de recevoir de leur
+capteurs uniquement des informations sur leur entourage restreint. Ils n'ont
+donc pas de connaissance du nombre total de robots où de la présence de robots
+en dehors de leur champ de visibilité (\textit{visibility radius}.)
+
+\paragraph{Homogénéité} Tous les robots sont pré-programmés avec un même
+algorithme et commencent à la même étape. Le système étant synchrone, ils
+peuvent garder localement un compteur de cycle qu'ils effectuent, et ce
+compteur aura la même valeur pour tous les robots à chaque instant de
+l'algorithme.
+
+\paragraph{Anonymat} Il n'existe aucun paramètre global permettant de dissocier
+les robots. Leur capteurs leur renvoie donc que des informations sur la
+position des robots alentours, et nullement des particularités propres à chaque
+robot voisin.
+
+\paragraph{Points denses} Plusieurs robots peuvent se retrouver dans une même
+position a un instant $t$. Il n'est pas nécessaires pour un robot de connaitre
+le nombre de robots sur un point particulier, car une fois qu'ils sont à la
+même position, tous recevrons les mêmes informations de leur capteurs, et
+prendrons donc la même décision du fait de leur homogénéité. On peut donc les
+considérer comme un seul robot.
+
+\paragraph{Mémoire constante} Chaque robot ne peut retenir en mémoire qu'un
+nombre limité d'informations. Par exemple, son dernier mouvement ou son
+entourage précédent.
+
+\paragraph{Déplacement 1} \`A chaque étape, les robots ne peuvent se déplacer que
+sur un n\oe{}ud voisin direct.
+
+\paragraph{Désorientation} En plus d'avoir un système de coordonnée différente,
+les robots ont également leur propre orientation. Nous ne pouvons donc pas nous
+fier à l'orientation des instantanés reçues sur les entourages et devons les
+considérer comme s'ils avaient subies aléatoirement des rotations successives
+des $90^{\circ}$.
+
+\paragraph{Autonomie} Le mécanisme de coordination utilisé par les robots pour
+se rassembler doit être totalement décentralisé, i.e aucun contrôle central
+n'est utilisé.
+
+\paragraph{Terminaison} Du fait de l'autonomie des robots~: à la fin de chaque
+étape, chaque robot doit savoir s'il est dans un état terminal ou non. Il n'y a
+donc pas de système global permettant la désactivation des robots à distance.
+Quand tous les robots sont dans un état terminal, ils s'arrêtent et
+l'algorithme se termine. Quand aucun robot ne se déplace lors d'une étape, le
+système n'évoluera plus~; on dit qu'on a atteint un état quescient. \\
+
+Le graphe défini comme sous graphe de l'espace ne contenant que les n\oe{}uds
+occupés par des robots est connexe au départ, et doit le rester après chaque
+cycle. C'est à dire que chaque robot est accessible par tous les autres en ne
+passant que par des robots à distance 1. Cette restriction est nécessaire car,
+intuitivement, il est très difficile, voire impossible pour un robot qui n'a
+pas de voisin de se rassembler avec les autres robots de l'espace dû à sa
+visibilité limitée. On peut dire qu'on a un point de rassemblement par
+composante connexe.
+
+Concernant ce point de rassemblement, on ne peut pas garantir son unicité à
+cause de la désorientation des robots. Par exemple, s'il ne reste que deux
+robots adjacents, ils ont le même voisinage (à une rotation près), et donc il
+n'y a pas moyen de les dissocier pour choisir un point unique pour le
+rassemblement. Nous considérons donc que s'il y a 1, 2 ou 4 robots adjacents,
+l'algorithme peut se terminer et les robots sont rassemblés. Plus précisément,
+les cas de terminaison sont exposés en figure \ref{fig:end_cases}.
+\input{figures/end_cases.tex}
+
+
+
+\subsection{Déroulement du projet}
+TODO \\
+Le projet est fait seul, et j'utilise un système de gestion de version (Git)
+hébergé par Github. Cela me permet d'avoir les sources et toute l'historique de
+mon travail où que je sois, et cela rend la communication avec mon tuteur plus
+simple, il peut voir le travail que je réalise à tout moment.
+\LaTeX -> plaintext -> suivi des modifications des documents.
+python tkinter \\
