@@ -2,6 +2,8 @@
 \newcommand{\Calculer}{\textit{Calculer}\xspace}
 \newcommand{\SeDeplacer}{\textit{Se\_déplacer}\xspace}
 
+\newcommand{\outil}[1]{\textit{#1}\xspace}
+
 \section{Cadre du projet}
 
 \subsection{Présentation du sujet}
@@ -13,7 +15,7 @@ résoudre le problème posé sans se soucier des cas pratiques.
 
 Comme énoncé dans l'introduction, nous nous plaçons dans le cadre d'un univers
 discret. C'est à dire que le plan peut être représenté par une grille infinie à
-deux dimension où chaque cellule possède 8 cellules voisines différentiables
+deux dimension où chaque cellule possède 8 cellules adjacentes différentiables
 par leur coordonnées relatives. Les entités mobiles (ou robots) sont modélisés
 comme des unités de calcul ayant une mémoire locale et sont capables
 d'effectuer des calculs locaux. Les robots sont placés dans le plan et sont
@@ -82,7 +84,7 @@ nombre limité d'informations. Par exemple, son dernier mouvement ou son
 entourage précédent.
 
 \paragraph{Déplacement local} \`A chaque étape, les robots ne peuvent se
-déplacer que sur une cellule voisine directe.
+déplacer que sur une cellule adjacente.
 
 \paragraph{Désorientation} En plus d'avoir un système de coordonnée différente,
 les robots ont également leur propre orientation. Nous ne pouvons donc pas nous
@@ -112,26 +114,71 @@ composante connexe.
 
 Concernant ce point de rassemblement, on ne peut pas garantir son unicité à
 cause de la désorientation des robots. Par exemple, s'il ne reste que deux
-robots adjacents, ils ont le même voisinage (à une rotation près), et donc il
-n'y a pas moyen de les dissocier pour choisir un point unique pour le
-rassemblement. Nous considérons donc que s'il y a 1, 2 ou 4 robots adjacents,
-l'algorithme peut se terminer et les robots sont rassemblés. Plus précisément,
-les cas de terminaison sont exposés en figure \ref{fig:end_cases}. \\
-\input{figures/end_cases.tex}
+robots adjacents, ils ont le même voisinage (à une rotation près), et donc à
+cause de leur déterminisme, il n'y a pas moyen de les dissocier pour choisir un
+point unique pour le rassemblement. Nous considérons donc que s'il y a 1, 2 ou
+4 robots adjacents, l'algorithme peut se terminer et les robots sont
+rassemblés. Plus précisément, les cas de terminaison sont exposés en figure
+\ref{fig:end_cases}. \\ \input{figures/end_cases.tex}
 
 Pour résumer, on a un ensemble de robots sur le plan discret disposé de manière
 connexe qui doivent se rassembler. Ils se déplacent de manière synchrone, sont
 autonomes, homogènes, anonymes et désorientés. L'objectif du sujet est de
 trouver un algorithme déterministe à exécuter par tous les robots, qui parvient
-à les rassembler en un nombre de cycles fini. Je me suis d'abord attaché à
+à les rassembler en un nombre de rondes fini. Je me suis d'abord attaché à
 déterminer les cas de voisinage à distance 1, tout en implémentant l'interface
 graphique permettant une visualisation et la mise en \oe{}uvre de l'algorithme.
+Puis il a fallu modifier, sophistiquer et prouver la correction de
+l'algorithme.
 
 \subsection{Déroulement du projet}
-TODO \\
-Le projet est fait seul, et j'utilise un système de gestion de version (Git)
-hébergé par Github. Cela me permet d'avoir les sources et toute l'historique de
-mon travail où que je sois, et cela rend la communication avec mon tuteur plus
-simple, il peut voir le travail que je réalise à tout moment.
-\LaTeX -> plaintext -> suivi des modifications des documents.
-python tkinter \\
+
+Le TER a commencé le 10 mars, étant réalisé seul, et la programmation assez
+légère, je n'ai pas eu à utiliser de méthodes de développement très
+développées. J'ai néanmoins utilisé un système de gestion de version tout au
+long du projet. Cela m'a permis d'avoir les codes sources et toute l'historique
+de mon travail où que je sois (car hébergé sur internet). De plus, cela rendais
+la communication avec mon tuteur plus simple, il pouvais voir le travail que je
+réalisais à tout moment.
+
+Une fois la base de code écrite, elle faisait l'objet de beaucoup de petites
+modifications temporaires pour tester les avancement de recherche effectués à
+côté. La preuve de l'algorithme a également fait appel à la programmation, mais
+cela était toujours temporaire et n'affectais pas l'application graphique, d'où
+la nécessité de versionner les sources.
+
+Enfin, la soutenance s'est tenue le 2 juin devant un jury composé de membres du
+laboratoire d'informatique fondamentale (LIF).
+
+\subsection{Outils}
+
+Je vais vous présenter ici les outils utilisés durant le projet. La majorité
+sont des logiciels libres, car je pense que les privilégier est un devoir moral
+de tout utilisateur.
+
+\paragraph{Environnement de développement} \outil{Vim} et \outil{tmux} dans un
+système \outil{GNU/Linux}. Vim (Vi iMproved) est un éditeur de texte modal très
+personnalisable en mode texte. Il est disponible par défaut sur beaucoup de
+distributions GNU/Linux. Tmux est un multiplexeur de terminaux en mode texte
+qui permet de manipuler et d'utiliser plusieurs terminaux virtuels dans un seul
+\textit{terminal} en tant que processus système.
+
+\paragraph{Rapport} \outil{\LaTeX}. L'édition en mode texte simple (plaintext)
+du rapport me permet de le versionner et d'utiliser mon environnement de
+développement habituel. Je peux également générer et intégrer facilement au
+rapport des schémas à partir du code Python en utilisant le package
+\textit{tikz}.
+
+\paragraph{Code} \outil{Python} et la bibliothèque \outil{TkInter}. Python est
+un langage interprété et interactif de haut niveau doté d'une grande variété de
+modules intégrés par défaut. Parmi ceux-ci, Tkinter~: rapide à prendre en main,
+il permet la création d'interfaces graphiques simples.
+
+\paragraph{Versionning} \outil{Git}~: logiciel de gestion de versions
+décentralisé permettant une gestion très fine du code source ou de n'importe
+quel contenu texte. Le dépôt du projet est hébergé sur \textit{GitHub}
+(\url{http://github.com/perelo/RobotGathering}), ainsi que la configuration de
+mon environnement de développement. \\
+
+Tous ces outils me permettent de travailler confortablement sur des machines
+minimalement équipées, où même à travers une session ssh distante.
