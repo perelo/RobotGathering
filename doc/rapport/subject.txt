@@ -1,0 +1,18 @@
+34 Algorithmes Distribués pour Robots Mobiles
+    proposé par Shantanu Das
+    Contact : shantanu.das@lif.univ-mrs.fr
+    Lieu du stage : LIF, LUMINY
+    Nombre d’étudiants souhaités : 1
+
+We consider a system of autonomous robots moving on a discrete space. Each
+robot is pre-programmed with the same algorithm and the objective for the
+robots is to collectively perform a task without the help of any central
+controller. Designing algorithms for coordi- nation among the robots, without
+any central authority is a challenging task. Some problems for mobile robots
+that have been studied before are : gathering of robots in the same location,
+filling a space with robots (e.g. [Barrameda et. al. 2008]), or the pattern
+formation problem (e.g. [Gordon et al. 2003]).  In this project we will create
+a program to visualize a distributed algorithm for mobile robots. Familiarity
+with Java GUI programming is required for this project. Some knowledge of
+distributed algorithms would be helpful for implementing this project.
+

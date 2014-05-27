@@ -1,14 +1,120 @@
 \section{Travail réalisé}
-item choix d'implémentation \\
-étapes pour arriver à l'algo final \\
-étapes de la preuve \\
+
+Cette section retrace le travail que j'ai réalisé durant ce projet, les
+difficultés que j'ai rencontré ainsi que les solutions apportées.
+
+\subsection{Recherche fondamentale}
+
+Le processus de recherche a nécessité plusieurs étapes, et est encore en cours.
+Dans un premier temps, il a fallu déterminer les cas de voisinage (instantanés)
+dans lesquels les robots effectuent un mouvement. On considère d'abord que les
+robots n'ont qu'une visibilité de 1, c'est à dire qu'ils ne voient que les
+robots qui sont dans des cellules adjacentes. La figure \ref{fig:cas} en annexe
+montre tous les cas de voisinage à distance 1 qu'un robot peut rencontrer. Il
+n'est pas nécessaire de traiter les cas analogues correspondant à des rotations
+de $90^\circ{}$, $180^\circ{}$ et $270^\circ{}$ de chacun de ces cas.  En
+effet, lorsqu'un robot reçoit un instantané qui ne fait pas parti des cas
+exposés, il effectue la rotation nécessaire, et applique l'algorithme selon le
+cas ayant subi la rotation. \\
+
+L'idée de base pour le rassemblement est d'\textit{arrondir les angles}. La
+figure \ref{fig:cas_mvt} montre les cas sujet à mouvements.
+
+\input{figures/cas_mvt.tex}
+
+Ces cas semblent assez naturels, cependant ce n'est pas aussi simple. Par
+exemple, examinons de plus près les cas (f) et (g). Si les robots se déplacent
+dans ces cas, il existe une infinité d'arrangements des robots qui mènent à un
+graphe non connexe. Or, si ils ne se déplacent pas, il existe une infinité
+d'arrangements quescient alors que les robots ne sont pas du tout rassemblés.
+Il en est de même pour les cas (m) et (n). Les figures \ref{fig:deconnexion} et
+\ref{fig:quescient} montrent des exemples de cas symétriques où les robots sont
+respectivement déconnectés et quescient si les cas (f) et (g) ne sont
+respectivement utilisés et non utilisés. Même s'il n'était pas nécessaire de le
+prouver, cela montre que le \GatheringProblem ne pourra se résoudre avec des
+robots sans mémoire (\textit{oblivious}).
+
+\input{figures/deconnexion.tex}
+\input{figures/quescient.tex}
+
+Pour résoudre ce problème, il faut réussir à détecter la déconnexion, puis
+utiliser la mémoire des robots pour revenir à la position précédente. Cela
+nécessite deux rondes~:
+\begin{enumerate}[1]
+  \item Regarder son entourage et se déplacer en utilisant les cas (f), (g),
+  (m) ou (n) s'il le faut, et enregistrer le mouvement.
+  \item Détecter la déconnexion si on était dans un des cas (f), (g), (m) ou
+  (n) et se déplacer à la position précédente si nécessaire.
+\end{enumerate}
+Il faut que tous les robots exécutent ces deux rondes, et que les robots ne se
+déplacent pas à la deuxième ronde s'ils ne sont pas déconnectés. Cela peut se
+réaliser facilement avec un compteur de rondes. Comme les robots commencent
+tous en même temps, on peut définir que les rondes paires correspondent à la
+première étape, et les rondes impaires à la deuxième. Ainsi, cela double le
+nombre de rondes sans affecter la complexité de l'algorithme.
+
+Si un robot en position ($i$,$j$) est dans le cas (f) ou (m) à la première
+étape, la déconnexion est détectée dans la deuxième étape par l'absence totale
+de robots aux positions ($i+1$,$j$), ($i+1$,$j-1$) et ($i$,$j-1$). Pour les cas
+(g) et (n) ce sont les positions ($i-1$,$j$), ($i-1$,$j-1$) et ($i$,$j-1$). \\
+
+Ceci étant réglé, un autre problème se pose~: il existe des paires
+d'arrangements circulaires de robots qui alternent entre eux. Autrement dit,
+les robots ne sont pas quescient mais ne se rassemblent jamais. La figure
+\ref{fig:oscillation} donne un tel exemple d'oscillation.
+
+\input{figures/oscillation.tex}
+
+Nous avons modifié l'algorithme de beaucoup de manières pour essayer de
+résoudre ce problème. Nous essayions d'identifier les cas d'oscillation
+(locales et globales), et sommes arrivés à une solution qui semble marcher dans
+tous les cas. C'est de nouveau les instantanés (f), (g), (m) et (n) qui posent
+problème~: dans les cas (f) et (m), on n'effectue le mouvement que si les
+cellules ($i-2$,$j$) et ($i-2$,$j+1$) sont toutes les deux soit vides soit
+pleines. Pour les cas (g) et (n), ce sont les cellules ($i+2$,$j$) et
+($i+2$,$j+1$). Notez que ces cellules ne sont pas à portée directe des robots
+(elles sont à distance 2). Concernant la mise en \oe{}uvre de cette
+modification, nous avons d'abord essayer d'étendre la solution du problème
+précédent en ajoutant deux nouvelles rondes~: l'une pour se déplacer à portée
+des cellules concernés~; l'autre pour revenir avec l'information. Mais cela est
+tout simplement faux car lors de cette première ronde, \textit{tous} les robots
+qui se trouvent dans les cas (f), (g), (m) ou (n) vont se déplacer, et
+probablement remplir des cellules à vérifier par par d'autres robots. Or la
+présence ou non des robots dans ces cellules concerne l'état précédent tout
+déplacement de robot. La solution proposée ne peut donc se réaliser qu'avec des
+robots ayant un rayon de visibilité supérieur ou égal à 2. Nous continuons tout
+de même a utiliser les instantanés des positions des voisins à distance 1
+(figure \ref{fig:cas_mvt}), mais lorsqu'un robot se trouve dans le cas (f),
+(g), (m) ou (n), il regarde en plus les deux positions concernés sans se
+soucier des autres robots à distance 2. Même si cela est frustrant de devoir
+augmenter les capacités des robots pour si peu, leur visibilité est toujours
+limitée, et nous restons cohérent avec les contraintes que nous nous sommes
+imposés. \\
+
+Au final, nous avons un algorithme qui fonctionne dans tous les cas testés.
+Nous définissons deux fonctions pour simplifier l'écriture formelle de
+l'algorithme~:
+\begin{itemize}
+  \item $prendre\_instantane()$ qui prend un instantané des voisins accessibles
+  et effectue la rotation nécessaire pour qu'il soit dans un des cas de
+  voisinage de la figure \ref{fig:cas}~;
+  \item $rotation180(N_k)$ qui effectue une rotation de $180^\circ{}$ de
+  l'instantané passé en paramètre.
+\end{itemize}
+La figure \ref{fig:algo} donne le pseudo-code de l'algorithme final. \\
+
+\input{figures/algo.tex}
+
+TODO: proof + étude de rassemblement des carrés ?
+
+\subsection{Programmation}
 
 Dans un algorithme séquentiel,
 pour l'implémentation, il faut 2 parcours de tous les robots : prévoir la
 prochaine position des robots, puis les déplacer. \\
 
-étude du rassemblement de carrés ? \\
-
-On définit les 3 fonctions de rotation \\
-
 1 screenshot de l'appli
+
+\subsection{Programmation}
+IG
+pep8

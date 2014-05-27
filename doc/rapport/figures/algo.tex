@@ -1,27 +1,32 @@
-\begin{algorithm}[H]
-  $finish \leftarrow False$\;
+\begin{algorithm}[h!]
+  $fin \leftarrow Faux$\;
   $k \leftarrow 0$\;
-  \While{not $finish$} {
-    $N_k \leftarrow get\_neighbors()$\;
-    \uIf{$k \% 2 = 0$} {
+  \Tq{non $fini$} {
+    $N_k \leftarrow prendre\_instantane()$\;
+    \uSi{$k \% 2 = 0$} {
       % test d'arrêt
-      \uIf{$N_k$ doesn't contain any neighbor or \\
-          ($N_k$ is case $(a)$ or $(b)$ and $N_{k-2}=rotate180(N_k)$) or \\
-          ($N_k$ is case $1.3.2$         and $N_{k-2}=rotate90 (N_k)$) } {
-          $finish \leftarrow True$\;
+      \uSi{$N_k$ ne contient aucun voisin ou \\
+           $N_k$ est le cas $(a)$, $(b)$ ou $(j)$ et $N_{k-2}=rotation(N_k)$}{
+          $fini \leftarrow Vrai$\;
       }
       % mouvement si il n'y a personne en (i,j-2) ou (i+1,j-2)
-      \ElseIf{$(i, j-2)$ and $(i+1, j-2)$ are both empty or both full} {
-        move according to $N_k$\;
+      \SinonSi{$N_k$ est le cas $(f)$ ou $(m)$ et
+      ($i-2$,$j$) et ($i-2$,$j+1$) sont pleins soit vides ou \\
+      $N_k$ est le cas $(g)$ ou $(n)$ et
+      ($i+2$,$j$) et ($i+2$,$j+1$) sont pleins soit vides} {
+        se dépacer selon $N_k$\;
       }
     }
-    \Else{
-      \If{($N_{k-1}$ is case $(f)$, $(g)$, $(m)$ or $(n)$) and
-          ($(i,j+1)$, $(i-1,j)$, $(i-1,j+1)$ are all empty)} {
-          move to $(i-1,j)$\;
+    \Sinon{
+      \Si{$N_{k-1}$ est le cas $(f)$ ou $(g)$ et ($i+1$,$j$), ($i+1$,$j-1$) et
+          ($i$,$j-1$) sont tous vides ou \\
+          $N_{k-1}$ est le cas $(g)$ ou $(n)$ et ($i-1$,$j$), ($i-1$,$j-1$) et
+          ($i$,$j-1$) sont tous vides} {
+          se déplacer en $(i,j-1)$\;
       }
     }
     $k \leftarrow k+1$\;
   }
-  \caption{}
+  \caption{Algorithme de rassemblement d'agents mobiles}
+  \label{fig:algo}
 \end{algorithm}

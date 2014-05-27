@@ -16,14 +16,16 @@ résoudre le problème posé sans se soucier des cas pratiques.
 Comme énoncé dans l'introduction, nous nous plaçons dans le cadre d'un univers
 discret. C'est à dire que le plan peut être représenté par une grille infinie à
 deux dimension où chaque cellule possède 8 cellules adjacentes différentiables
-par leur coordonnées relatives. Les entités mobiles (ou robots) sont modélisés
-comme des unités de calcul ayant une mémoire locale et sont capables
-d'effectuer des calculs locaux. Les robots sont placés dans le plan et sont
-représentés par des cellules "pleines" ayant un couple de coordonnées $(x,y)$
-dans $\mathbb{N}^2$. Ils sont capables de se déplacer librement dans l'espace
-de manière synchrone et sont dotés de capacités sensorielles leur permettant
-d'observer la position de leur voisin à un instant $t$. Plus formellement, les
-robots effectuent en permanence une succession de trois opérations~:
+par leur coordonnées relatives. Par convention, on définit l'axe $x$
+\textit{vers la droite} et l'axe $y$ \textit{vers le bas}. Les entités mobiles
+(ou robots) sont modélisés comme des unités de calcul ayant une mémoire locale
+et sont capables d'effectuer des calculs locaux. Les robots sont placés dans le
+plan et sont représentés par des cellules "pleines" ayant un couple de
+coordonnées $(x,y)$ dans $\mathbb{N}^2$. Ils sont capables de se déplacer
+librement dans l'espace de manière synchrone et sont dotés de capacités
+sensorielles leur permettant d'observer la position de leur voisin à un instant
+$t$. Plus formellement, les robots effectuent en permanence une succession de
+trois opérations~:
 \begin{enumerate}[(i)]
   \item \Observer. Le robot observe son voisinage en activant ses capteurs qui
   lui renvoient un instantané des positions des robots à l'intérieur de son
@@ -101,7 +103,7 @@ n'est utilisé.
 donc pas de système global permettant la désactivation des robots à distance.
 Quand tous les robots sont dans un état terminal, ils s'arrêtent et
 l'algorithme se termine. Quand aucun robot ne se déplace lors d'une étape, le
-système n'évoluera plus~; on dit qu'on a atteint un état quescient. \\
+système n'évoluera plus~; on dit qu'on a atteint un état \textit{quescient}. \\
 
 Le graphe défini comme sous graphe de l'espace ne contenant que les n\oe{}uds
 occupés par des robots est connexe au départ, et doit le rester après chaque

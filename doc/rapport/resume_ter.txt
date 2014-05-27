@@ -1,0 +1,5 @@
+Résumé : Le but du projet est de mettre en oeuvre, de l'analyse à la
+programmation, les notions présentées en cours. C'est l'occasion, pour les
+étudiants, d'utiliser sur un cas pratique, les éléments exposées dans les UE.
+Travail effectué sous la direction pédagogique d'un enseignant, et donnant lieu
+à la rédaction d'un mémoire et d'une soutenance orale.
