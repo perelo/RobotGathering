@@ -12,41 +12,42 @@ allons nous concentrer sur le développement d'un algorithme correct pour
 résoudre le problème posé sans se soucier des cas pratiques.
 
 Comme énoncé dans l'introduction, nous nous plaçons dans le cadre d'un univers
-discret. C'est à dire que le plan peut être représenté par un graphe simple
-non-orienté où chaque sommet possède 8 voisins différentiables par leur
-coordonnées relatives au sommet considéré. Les entités mobiles (ou robots) sont
-modélisés comme des unités de calcul ayant une mémoire locale et sont capables
+discret. C'est à dire que le plan peut être représenté par une grille infinie à
+deux dimension où chaque cellule possède 8 cellules voisines différentiables
+par leur coordonnées relatives. Les entités mobiles (ou robots) sont modélisés
+comme des unités de calcul ayant une mémoire locale et sont capables
 d'effectuer des calculs locaux. Les robots sont placés dans le plan et sont
-représentés par des points de $\mathbb{N}^2$. Ils sont capables de se déplacer
-librement dans l'espace de manière synchrone et sont dotés de capacités
-sensorielles leur permettant d'observer la position de leur voisin à un instant
-$t$. Plus formellement, les robots effectuent en permanence une succession de
-trois opérations~:
+représentés par des cellules "pleines" ayant un couple de coordonnées $(x,y)$
+dans $\mathbb{N}^2$. Ils sont capables de se déplacer librement dans l'espace
+de manière synchrone et sont dotés de capacités sensorielles leur permettant
+d'observer la position de leur voisin à un instant $t$. Plus formellement, les
+robots effectuent en permanence une succession de trois opérations~:
 \begin{enumerate}[(i)]
-  \item \Observer. Le robot observe son voisinage en activant ses
-  capteurs qui lui renvoient un instantané des positions des robots à
-  l'intérieur de son champ de visibilité.
-  \item \Calculer. Le robot effectue un calcul local donné par
-  l'algorithme. Le résultat de ce calcul est un point de destination (à
-  distance au plus 1 du robot concerné). Si ce point est la position du robot,
-  celui-ci ne se déplace pas.
-  \item \SeDeplacer. Le robot se déplace à la position renvoyée par le
-  calcul. \\
+  \item \Observer. Le robot observe son voisinage en activant ses capteurs qui
+  lui renvoient un instantané des positions des robots à l'intérieur de son
+  champ de visibilité.
+  \item \Calculer. Le robot effectue un calcul local donné par l'algorithme. Le
+  résultat de ce calcul est un point de destination (à distance au plus 1 du
+  robot concerné). Si ce point est la position du robot, celui-ci ne se déplace
+  pas.
+  \item \SeDeplacer. Le robot se déplace à la position renvoyée par le calcul.
+  \\
 \end{enumerate}
-La séquence \Observer-\Calculer-\SeDeplacer constitue un cycle de calcul. On
-définit plusieurs contraintes et suppositions sur les robots dont il faut nous
-soumettre.
 
-\paragraph{Synchronicité} Le temps passé pour \Observer, \Calculer et
-\SeDeplacer est le même pour tous les robots. De plus, ils commencent à
-\Observer en même temps.
+La séquence \Observer-\Calculer-\SeDeplacer constitue un \textit{cycle de
+calcul}, aussi appelé \textit{ronde} ou \textit{étape}. On définit plusieurs
+contraintes et suppositions sur les robots dont il faut nous soumettre.
+
+\paragraph{Synchronicité} Le temps est divisé en étapes (discrétisation). \`A
+chaque étape de temps, les robots effectuent une ronde, i.e. les trois
+opérations cités ci-dessus.
 
 \paragraph{Pas de communication directe entre les robots} Certains modèles
 permettent l'envoi de messages entre les robots en plus de leur déplacement.
-Cela est en effet assez réaliste si les robots sont considérés sont des
+Cela est en effet assez réaliste si les robots sont considérés comme des
 machines électroniques avec des capacités de communications et un protocole
-défini. Néanmoins, nous n'autorisons ici qu'une communication indirecte avec
-leur positions relatives.
+défini. Ils communiquent néanmoins indirectement via leur mouvements et leur
+positions relatives.
 
 \paragraph{Visibilité limitée} Les robots ne sont capables de recevoir de leur
 capteurs uniquement des informations sur leur entourage restreint. Ils n'ont
@@ -64,6 +65,11 @@ les robots. Leur capteurs leur renvoie donc que des informations sur la
 position des robots alentours, et nullement des particularités propres à chaque
 robot voisin.
 
+\paragraph{Déterminisme} Les voisinages déterminent le mouvement~: pour un même
+voisinage, les robots réagissent de la même façon. L'algorithme développé sera
+donc déterministe. Une solution au \GatheringProblem a déjà été apporté dans
+un contexte non-déterministe.
+
 \paragraph{Points denses} Plusieurs robots peuvent se retrouver dans une même
 position a un instant $t$. Il n'est pas nécessaires pour un robot de connaitre
 le nombre de robots sur un point particulier, car une fois qu'ils sont à la
@@ -75,8 +81,8 @@ considérer comme un seul robot.
 nombre limité d'informations. Par exemple, son dernier mouvement ou son
 entourage précédent.
 
-\paragraph{Déplacement 1} \`A chaque étape, les robots ne peuvent se déplacer que
-sur un n\oe{}ud voisin direct.
+\paragraph{Déplacement local} \`A chaque étape, les robots ne peuvent se
+déplacer que sur une cellule voisine directe.
 
 \paragraph{Désorientation} En plus d'avoir un système de coordonnée différente,
 les robots ont également leur propre orientation. Nous ne pouvons donc pas nous
@@ -85,7 +91,7 @@ considérer comme s'ils avaient subies aléatoirement des rotations successives
 des $90^{\circ}$.
 
 \paragraph{Autonomie} Le mécanisme de coordination utilisé par les robots pour
-se rassembler doit être totalement décentralisé, i.e aucun contrôle central
+se rassembler doit être totalement décentralisé, i.e. aucun contrôle central
 n'est utilisé.
 
 \paragraph{Terminaison} Du fait de l'autonomie des robots~: à la fin de chaque
@@ -110,10 +116,16 @@ robots adjacents, ils ont le même voisinage (à une rotation près), et donc il
 n'y a pas moyen de les dissocier pour choisir un point unique pour le
 rassemblement. Nous considérons donc que s'il y a 1, 2 ou 4 robots adjacents,
 l'algorithme peut se terminer et les robots sont rassemblés. Plus précisément,
-les cas de terminaison sont exposés en figure \ref{fig:end_cases}.
+les cas de terminaison sont exposés en figure \ref{fig:end_cases}. \\
 \input{figures/end_cases.tex}
 
-
+Pour résumer, on a un ensemble de robots sur le plan discret disposé de manière
+connexe qui doivent se rassembler. Ils se déplacent de manière synchrone, sont
+autonomes, homogènes, anonymes et désorientés. L'objectif du sujet est de
+trouver un algorithme déterministe à exécuter par tous les robots, qui parvient
+à les rassembler en un nombre de cycles fini. Je me suis d'abord attaché à
+déterminer les cas de voisinage à distance 1, tout en implémentant l'interface
+graphique permettant une visualisation et la mise en \oe{}uvre de l'algorithme.
 
 \subsection{Déroulement du projet}
 TODO \\
