@@ -311,14 +311,120 @@ l'aspect programmation du projet.
 
 \subsection{Programmation}
 
-Dans un algorithme séquentiel,
-pour l'implémentation, il faut 2 parcours de tous les robots : prévoir la
-prochaine position des robots, puis les déplacer. \\
+J'ai donc utilisé le langage Python et la bibliothèque TkInter, en me basant
+sur la charte de codage conseillée par Python~: PEP8~; le tout en anglais,
+permettant une plus grande maintenabilité. L'objectif était de créer une
+interface graphique permettant de visualiser les algorithmes distribués
+développés sur papier. \\
 
-dfs \\
-extraction de matrice \\
+L'interface graphique nécessaire est très sommaire~: un canevas contenant une
+grille fixe, et deux boutons~:
+\begin{itemize}
+  \item \emph{next} pour avancer d'une étape dans l'algorithme
+  \item \emph{prev} pour reculer
+\end{itemize}
+Les clics de la souris sur le canevas permettent d'ajouter des robots à la
+volée sur l'espace où d'en enlever. Un autre bouton \emph{clear} a été ajouté
+pour supprimer tous les robots. Avec ceci, il est très facile d'effectuer des
+tests sur des exemples d'arrangements de robots qui pourrait poser problème. La
+figure \ref{fig:screenshot} en annexe montre une capture d'écran de
+l'application avec plusieurs arrangements de robots de tests en cours de
+rassemblement. Les robots colorés en rouge sont ceux qui se sont détectés comme
+étant dans un état quescient. \\
 
-1 screenshot de l'appli \\
+L'ensemble des robots est stocké en mémoire dans un conteneur Python appelé
+\texttt{set}. Il sert à stocker des ensembles, c'est à dire une liste d'objet
+uniques non ordonnée. Cela est suffisant car on a dit que les robots sur une
+même position peuvent être vus comme un seul et même robot.  Pour éviter de
+calculer plusieurs fois une étape (par exemple lors de clics successifs sur
+\emph{next} et \emph{prev}), on stocke une liste d'ensemble de robots indexés
+par le numéro de la ronde. C'est la classe \texttt{Space} qui contient cette
+liste, et elle fourni les méthodes d'avancement des robots ainsi que des
+méthodes pour le remplissage de l'espace.
 
-IG
-pep8
+Des configurations de robots peuvent être écrites dans un fichier texte sous
+forme binaire, qui sera lu et automatiquement stocké en mémoire par le
+programme. Il suffit alors de choisir quels arrangements utiliser dans l'espace
+avant de lancer le programme. Il a donc fallu écrire une fonction qui traduit
+les coordonnées binaires des robots (décalages) en coordonnées cartésiennes (x
+et y). Voici l'exemple de la figure \ref{fig:oscillation}~: \\
+
+\begin{verbatim}
+spiky-square
+0 0 0 0 1 0 0 0 0
+0 1 1 1 0 1 1 1 0
+0 1 0 0 0 0 0 1 0
+0 1 0 0 0 0 0 1 0
+1 0 0 0 0 0 0 0 1
+0 1 0 0 0 0 0 1 0
+0 1 0 0 0 0 0 1 0
+0 1 1 1 0 1 1 1 0
+0 0 0 0 1 0 0 0 0
+\end{verbatim}
+
+En effet, tout les calculs sur les arrangements de robots sont en binaire. Ce
+n'est que lorsqu'on entre en contact avec l'interface graphique que l'espace
+est converti. Il a notamment fallu écrire une fonction de génération de
+configurations aléatoires. L'idée est de commencer par un espace empli de
+robots (une suite de 1), puis de les enlever (mettre un bit à 0) au fur et à
+mesure jusqu'à ce qu'on en ai le nombre désiré. Et à chaque fois qu'on met un
+bit à 0, on test si l'espace est encore connexe, si oui on continue, sinon, on
+remet bit à 1. Pour tester la connexité, on utilise un parcours en largeur des
+robots avec une pile en commençant par un le bit à 1 de poids le plus faible.
+\\
+
+Concernant l'implémentation de l'algorithme, tout d'abord, les cas de mouvement
+sont stockés dans un fichier à part comme dans la figure \ref{fig:cas_mvt}. Les
+rotations sont effectués automatiquement et le tout est stocké dans un
+dictionnaire Python permettant d'avoir directement le mouvement à effectuer à
+partir du voisinage. Le format est le suivant~:
+Les trois premières lignes correspondent à la version binaire de l'instantané,
+et la quatrième contient les coordonnées relatives au mouvement à effectuer.
+Les instantanés sont séparés par des lignes vides. Voici l'exemple du cas (d)~:
+\begin{verbatim}
+0 0 0
+0 1 0
+1 0 1
+1, 0
+\end{verbatim}
+Cela permet une grande flexibilité par rapport aux instantanés utilisés pour
+l'algorithme.
+
+Une première différence avec l'algorithme théorique est dû à la parallélisation
+des calculs effectués par les robots. Notre programme est séquentiel, il faut
+donc parcourir tous les robots deux fois au moins~: une pour prévoir la
+prochaine position des robots, une deuxième pour les déplacer.  Lorsqu'un clic
+est effectué sur le bouton \emph{next}, on récupère l'entourage de chaque robot
+sous forme binaire ainsi que leur mouvement associé. Puis on change les
+coordonnées des robots en gardant à part ceux qui étaient dans les cas (f),
+(g), (m) et (n). Enfin, pour ces derniers, on test s'ils sont déconnectés avec
+une opération binaire entre un masque et l'entourage récupéré, et on re-change
+leur coordonnées si nécessaire. \\
+
+Nous avons beaucoup utilisé la programmation pour la preuve de l'algorithme,
+notamment pour générer les graphes et vérifier les contraintes d'entourages
+pour traverser certaines arêtes (voir preuve.) Il a fallu écrire une fonction
+assez complexe manipulant des bits~: à partir d'un champs de bit
+interprété comme une matrice de 0 et de 1, récupérer une sous matrice dont les
+dimensions sont données. C'est peut-être la fonction qui m'a donné le plus de
+mal mais qui est très courte et fonctionne au final très bien. \\
+
+Le fait que nous ne manipulions que des champs de bits rend la génération de
+configurations très facile~: il suffit de compter en décimal, puis de convertir
+en binaire. Néanmoins, pour générer les graphes, il faut générer tous les
+arrangements sur un rectangle $7*7$, et à chaque fois, tester la connexité,
+avancer d'une étape, puis récupérer le nouveau voisinage~; et ce pour chaque
+instantané sujet à mouvement. Pour ce travail, il a fallu optimiser un maximum
+toutes ces opérations, en changeant les structures de données, en minimisant
+les opérations de vérification (de terminaison par exemple), etc... La
+génération de $G_{leftmost\_mid}$ a durée environ 45 minutes. C'est pour cela
+que même si ça nous aurai aidé pour la preuve de correction, nous n'avons pas
+généré les graphes pour deux étapes de l'algorithme. Ça aurait multiplié le
+temps de calcul de façon exponentiel, car il aurait fallu générer les
+arrangements sur des plus gros rectangles. \\
+
+Pour terminer, j'ai ajouter temporairement un système de \emph{dump} qui
+affiche sur la sortie standard les positions des robots présents sur l'espace,
+et si besoin les prochains mouvements. Le tout formaté pour \emph{tikz}. Je
+pouvais ainsi très facilement dessiner sur le rapport des configurations de
+robots venant directement du programme.
