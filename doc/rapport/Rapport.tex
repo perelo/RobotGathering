@@ -5,7 +5,6 @@
 % Ce modèle est mis  disposition selon le Contrat "Creative Commons
 % Paternité-Partage des Conditions Initiales  l'Identique 3.0 Unported"
 % http://creativecommons.org/licenses/by/3.0/
-
 \documentclass[12pt]{article}
 \input{style/packages.tex}
 
@@ -31,7 +30,7 @@
 
 \maketitle
     \newpage
-\input{body/pages/abstract.tex}
+\input{body/pages/remerciements.tex}
     \newpage
 \tableofcontents
     \newpage
@@ -46,10 +45,13 @@
     \newpage
 \input{body/pages/conclusion.tex}
     \newpage
+\nocite{*}
 \bibliographystyle{unsrt}
 \bibliography{biblio}
     \newpage
 \appendix
-\input{figures/cas.tex}
+\input{appendix/graphes.tex}
+\input{appendix/cases.tex}
+\input{appendix/screenshot.tex}
 
 \end{document}

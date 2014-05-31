@@ -1,9 +1,26 @@
+\newcommand{\Gathered}{\ensuremath{\textsc{gathered}}\xspace}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{cor}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{exmp}{Example}[section]
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Remark}
+\newtheorem*{note}{Note}
+
 \section{Travail réalisé}
 
 Cette section retrace le travail que j'ai réalisé durant ce projet, les
 difficultés que j'ai rencontré ainsi que les solutions apportées.
 
-\subsection{Recherche fondamentale}
+\subsection{Développement et preuve de l'algorithme}
 
 Le processus de recherche a nécessité plusieurs étapes, et est encore en cours.
 Dans un premier temps, il a fallu déterminer les cas de voisinage (instantanés)
@@ -18,7 +35,8 @@ exposés, il effectue la rotation nécessaire, et applique l'algorithme selon le
 cas ayant subi la rotation. \\
 
 L'idée de base pour le rassemblement est d'\textit{arrondir les angles}. La
-figure \ref{fig:cas_mvt} montre les cas sujet à mouvements.
+figure \ref{fig:cas_mvt} montre les cas sujet à mouvements. Les autres cas
+de voisinage n'impliquent aucun mouvement de la part des robots.
 
 \input{figures/cas_mvt.tex}
 
@@ -32,7 +50,7 @@ Il en est de même pour les cas (m) et (n). Les figures \ref{fig:deconnexion} et
 respectivement déconnectés et quescient si les cas (f) et (g) ne sont
 respectivement utilisés et non utilisés. Même s'il n'était pas nécessaire de le
 prouver, cela montre que le \GatheringProblem ne pourra se résoudre avec des
-robots sans mémoire (\textit{oblivious}).
+robots sans mémoire (\textit{oblivious}.)
 
 \input{figures/deconnexion.tex}
 \input{figures/quescient.tex}
@@ -46,9 +64,9 @@ nécessite deux rondes~:
   \item Détecter la déconnexion si on était dans un des cas (f), (g), (m) ou
   (n) et se déplacer à la position précédente si nécessaire.
 \end{enumerate}
-Il faut que tous les robots exécutent ces deux rondes, et que les robots ne se
+Il faut que tous les robots exécutent ces deux rondes, et qu'ils ne se
 déplacent pas à la deuxième ronde s'ils ne sont pas déconnectés. Cela peut se
-réaliser facilement avec un compteur de rondes. Comme les robots commencent
+réaliser facilement avec un compteur de rondes~: Comme les robots commencent
 tous en même temps, on peut définir que les rondes paires correspondent à la
 première étape, et les rondes impaires à la deuxième. Ainsi, cela double le
 nombre de rondes sans affecter la complexité de l'algorithme.
@@ -73,23 +91,26 @@ problème~: dans les cas (f) et (m), on n'effectue le mouvement que si les
 cellules ($i-2$,$j$) et ($i-2$,$j+1$) sont toutes les deux soit vides soit
 pleines. Pour les cas (g) et (n), ce sont les cellules ($i+2$,$j$) et
 ($i+2$,$j+1$). Notez que ces cellules ne sont pas à portée directe des robots
-(elles sont à distance 2). Concernant la mise en \oe{}uvre de cette
+(elles sont à distance 2.) Concernant la mise en \oe{}uvre de cette
 modification, nous avons d'abord essayer d'étendre la solution du problème
 précédent en ajoutant deux nouvelles rondes~: l'une pour se déplacer à portée
 des cellules concernés~; l'autre pour revenir avec l'information. Mais cela est
-tout simplement faux car lors de cette première ronde, \textit{tous} les robots
+tout simplement faux car lors de cette première ronde, \emph{tous} les robots
 qui se trouvent dans les cas (f), (g), (m) ou (n) vont se déplacer, et
-probablement remplir des cellules à vérifier par par d'autres robots. Or la
+probablement remplir des cellules à vérifier par d'autres robots. Or la
 présence ou non des robots dans ces cellules concerne l'état précédent tout
-déplacement de robot. La solution proposée ne peut donc se réaliser qu'avec des
-robots ayant un rayon de visibilité supérieur ou égal à 2. Nous continuons tout
-de même a utiliser les instantanés des positions des voisins à distance 1
+déplacement de robots. La solution proposée ne peut donc se réaliser qu'avec
+des robots ayant un rayon de visibilité supérieur ou égal à 2. Nous continuons
+tout de même a utiliser les instantanés des positions des voisins à distance 1
 (figure \ref{fig:cas_mvt}), mais lorsqu'un robot se trouve dans le cas (f),
 (g), (m) ou (n), il regarde en plus les deux positions concernés sans se
 soucier des autres robots à distance 2. Même si cela est frustrant de devoir
 augmenter les capacités des robots pour si peu, leur visibilité est toujours
 limitée, et nous restons cohérent avec les contraintes que nous nous sommes
-imposés. \\
+imposés. Les cas (f), (g), (m) et (n) modifiés sont donc présentés en figure
+\ref{fig:fgmn_modif}. \\
+
+\input{figures/fgmn_modif.tex}
 
 Au final, nous avons un algorithme qui fonctionne dans tous les cas testés.
 Nous définissons deux fonctions pour simplifier l'écriture formelle de
@@ -105,16 +126,305 @@ La figure \ref{fig:algo} donne le pseudo-code de l'algorithme final. \\
 
 \input{figures/algo.tex}
 
-TODO: proof + étude de rassemblement des carrés ?
+Au cours du développement de l'algorithme, j'ai effectué une étude sur le temps
+de convergence des robots lorsqu'ils sont agencés en rectangles ou en blocs
+(rectangle rempli.) J'ai extrait des motifs qui se répétaient durant le
+processus, me permettant de calculer le temps qu'il fallait pour les robots
+pour se rassembler de manière très précise (à la ronde près.) Mais l'algorithme
+à été modifié depuis, et les robots ne respectent plus les motifs identifiés
+précédemment, rendant l'étude obsolète. Je ne l'exposerai donc pas dans ce
+rapport. \\
+
+Une fois qu'un algorithme pour le \GatheringProblem a été identifié, nous nous
+sommes attaché à prouver sa correction. C'est à dire, apporter une preuve
+mathématique qui montre que le rassemblement s'effectue bien en un nombre fini
+de rondes si on utilise cet algorithme. En réalité, ce processus n'est pas si
+linéaire. Dès qu'un premier algorithme semblait fonctionner, nous avons
+commencé à réfléchir à une preuve. Cela nous amenai à voir que l'algorithme
+était faux, nous obligeant à le modifier, et ainsi de suite. L'algorithme de la
+figure \ref{fig:algo} est donc la dernière version et a été testé sur de
+nombreux cas aléatoires et connu comme posant problème (arrangement en cercles
+principalement.) La preuve de cet algorithme est à ce jour bien avancée mais
+pas totalement terminée. Si nous succédons à prouver la correction de
+l'algorithme, nous pourrons publier un article (en cours de rédaction) exposant
+ces résultats. Je vais vous présenter ici l'avancement de la preuve, des
+éléments techniques, ainsi que ce qu'il manque pour la terminer. \\
+
+L'idée principale de la preuve est de considérer le plus petit rectangle
+englobant tout les robots à un instant $t$, noté $BB(t)$ (\textit{Bounding
+Box}), et de montrer que ce rectangle diminue de taille après un nombre fini de
+rondes. Cela se réduit à considérer la ligne la plus haute de ce rectangle
+(\textit{topmost row}) et de montrer qu'elle \textit{descend} en un nombre fini
+de rondes. Pour cela, nous montrons dans un premier temps que s'il n'y a qu'un
+seul robot sur cette ligne, celle-ci descend au bout d'un nombre fini d'étapes.
+Puis, dans un deuxième temps, on considère le robot le plus à gauche se situant
+sur cette ligne (\textit{leftmost robot}) à un instant $t$, et on montre qu'au
+bout d'un nombre fini de rondes, le robot le plus à gauche s'est déplacé vers
+la droite et ne se déplacera plus sur la gauche. Le robot considéré n'est pas
+forcément le même, c'est le robot le plus à gauche sur la ligne la plus haute à
+un instant $t$. Analogiquement, on réitère la preuve avec le robot le plus à
+droite qui se déplace sur la gauche, et l'ensemble prouve bien que la ligne la
+plus haute descend au bout d'un nombre fini de rondes. \\
+
+Soit $r(t)$ le robot (seul) sur la ligne la plus haute de $BB(t)$ à l'étape
+$t$. S'il y a plus d'un robot sur cette ligne, $r(t)$ n'existe pas. Les
+coordonnées de $r(t)$ sont notés $X(t)$ et $Y(t)$. Nous assumerons en général
+que $Y(t)=0$ sauf mention contraire. L'arrangement global des robots à l'étape
+$t$ est notée $C(t)$. Si $C(t)$ est un cas terminal de l'algorithme, alors
+c'est appelé un arrangement ou une configuration \Gathered (rassemblée.)
+
+\begin{prop}
+Si $r(t)$ exixte et est en $(i,0)$, alors il y avait un robot en
+$(i-1,0)$, $(i,0)$ ou en $(i+1,0)$ à l'étape $t-1$.
+\end{prop}
+
+\begin{prop}
+\`A l'étape $t$, si un robot $w$ n'est pas dans le voisinage visible de $r(t)$,
+alors $w$ ne pourra pas être dans la ligne la plus haute à l'étape $t+1$.
+\end{prop}
+
+Ces deux propositions implique qu'il suffit d'étudier le voisinage de $r(t)$
+pour des nouveaux robots sur la ligne la plus haute pour déterminer si celle-ci
+est descendu.
+
+\begin{lem}
+Si $r(t)$ existe et $C(t)$ n'est pas \Gathered alors il existe une constante
+$c$ telle qu'après $c$ rondes, soit $BB(t+c) \subset BB(t)$ soit on est arrivé
+dans une configuration \Gathered.
+\end{lem}
+
+On prouve d'abord la première partie~: lorsque il n'y a qu'un seul robot sur la
+ligne la plus haute.
+
+\begin{proof}
+On définit le graphe $G_{single}(V_{single}, E_{single})$ commt suit~:
+\begin{itemize}
+  \item $V_{single}$ : instantanés de rayon 1 de $r(t)$
+  \item $(u,v) \in E_{single}$ si $u$ est le voisinage de $r(t)$ et $v$ est le
+  voisinage de $r(t+1)$ tel que $Y(t)=Y(t+1)$ et $C(t+1)$ n'est pas \Gathered
+\end{itemize}
+Autrement dit, on créé un graphe qui représente les mouvements du robot sur la
+ligne la plus haute. Ce graphe a été généré par programmation en énumérant tous
+les cas possibles de voisinage du robot après une étape. Pour cela, on énumère
+tous les arrangement possibles de l'espace sur un rectangle suffisamment grand
+tel que le robot au milieu est soit sur la ligne la plus haute. Puis on lance
+l'algorithme sur une étape, et on récupère l'entourage du robot. L'image du
+graphe est générée en utilisant le programme \textit{dot} et est présentée en
+figure \ref{fig:graph_single_all} en annexe. Les instantanés sur les n\oe{}uds
+sont représenté par une matrice où 0 et 1 représentent respectivement l'absence
+et la présence d'un robot.
+
+Si un n\oe{}ud n'a pas d'arête sortante, cela signifie que lorsque $r(t)$ est
+dans le cas représenté par ce n\oe{}ud, à $t+1$, soit la ligne est descendue,
+soit on a atteint une configuration \Gathered. On remarque que le graphe
+comporte des cycles~; si un chemin cyclique est suivi par l'algorithme, alors
+la ligne la plus haute peut ne jamais descendre. Néanmoins, les arêtes du
+graphe ne représentent qu'une seule étape de l'algorithme. Nous allons donc
+montrer qu'en réalité l'algorithme ne peut suivre aucun cycles. Il nous suffit
+pour cela d'étudier seulement trois chemins, et le lemme sera prouvé. \\
+
+Dans ce rapport, je me contenterai de montrer l'impossibilité d'un seul chemin.
+Les autres suivent le même raisonnement, je suis à votre disposition si vous
+êtes intéressé par la preuve complète. Toutes les affirmations cités ici ont
+été vérifiées par programmation par énumération. \\
+
+Notons de $A$ à $G$ les 7 n\oe{}uds de $G_{single}$ du haut vers le bas puis de
+la gauche vers la droite.
+
+Considérons le chemin ($B \rightarrow E \rightarrow D$).
+Le seul voisinage possible pour que l'algorithme suive l'arête $B \rightarrow
+E$ est le suivant (c'est un déplacement vers la droite)~: \\
+\spacee {(5,4)} {{(1,2),(1,1),(2,1),(3,0),(4,0),(4,1)}} {{}} \\
+Selon la rêgle (n), le robot en ($X(t)+1,Y(t)+1$) va descendre et occuper la
+cellule ($X(t+1),Y(t+1)+2$). Or, pour que l'algorithme suive l'arête $E
+\rightarrow D$ à $t+1$, la cellule ($X(t+1),Y(t+1)+2$) doit être vide. Par
+conséquent, le chemin ($B \rightarrow E \rightarrow D$) n'existe dans aucune
+exécution de l'algorithme. Analogiquement, le chemin $D \rightarrow E
+\rightarrow B$ n'existe pas non plus~; ainsi que les chemins ($B \rightarrow E
+\rightarrow B$) et ($D \rightarrow E \rightarrow D$) du fait de la symétrie des
+n\oe{}uds $B$ et $D$. \\
+
+Nous montrons de manière similaire l'impossibilité des chemins ($B \rightarrow
+C \rightarrow D$) et ($B \rightarrow D \rightarrow B$), et par analogie et
+symétrie, tous les cycles de $G_{single}$.
+
+\end{proof}
+
+Donc nous avons bien prouvé une première partie du lemme qui implique que s'il
+y a qu'un seul robot sur la ligne la plus haute, celle-ci descend après un
+nombre fini de rondes.
+
+Nous abordons la deuxième partie de la preuve de manière similaire. Mais elle
+en demeure plus compliquée. Notons $g(t)$ le robot le plus à gauche à l'étape
+$t$, et redéfinissons $X(t)$ et $Y(t)$ comme coordonnées de $g(t)$.
+
+\begin{prop}
+Si $C(t)$ n'est pas \Gathered alors il existe une constante $c$ telle qu'après
+$c$ rondes, soit $C(t)$ est \Gathered, soit $g(t+c)$ est plus à droite que
+$g(t)$, i.e. $X(g(t+c)) > X(g(t))$.
+\end{prop}
+
+\begin{proof}
+
+Nous définissons de manière similaire $G_{leftmost\_mid}$ le graphe des
+mouvement de $g(t)$ en ajoutant une contrainte~: les arêtes représentent des
+déplacement \textit{sur place}. C'est à dire que le robot au milieu du cas au
+n\oe{}ud origine a les mêmes coordonnées que celui au milieu du cas au n\oe{}ud
+destination.  Le graphe est présenté en figure \ref{fig:graph_leftmost_mid} en
+annexe. Pour prouver le lemme, il faut démontrer l'impossibilité des chemins
+cycliques dans ce graphe, puis étudier les cas de déplacement vers la gauche.
+\`A ce jour, seul la première partie a été démontrée. Je vais vous présenter
+ici comment nous avons traité les cycles n'impliquant qu'un seul n\oe{}ud, avec
+celui dessiné en haut à gauche pour exemple. Les autres sont traités comme pour
+$G_{single}$. \\
+
+On va regarder la ligne d'en dessous. Pour que ce cycle s'effectue, il ne faut
+pas que le robot $(X(t),Y(t))$ ne se déplace. Et comme $Y(t)$ représente la
+coordonnée de la ligne la plus haute, il n'y a aucun robot au dessus, donc (dû
+au cas (f) modifié) y a obligatoirement un robot en $(X(t)-2,Y(t)+1)$. Par
+conséquent, ce dernier n'a pas de voisin à distance 1 au dessus de lui. On va
+donc reprendre la preuve avec pour $g(t)$ le robot le plus à gauche de la ligne
+d'en dessous. Ce processus a forcément une fin, car le nouveau robot considéré
+est plus à gauche que le précédent, donc à un moment donné, la boucle ne sera
+pas effectuée car intuitivement, on arrivera sur le bord gauche de la figure.
+Donc si on démontre la proposition avec $G_{leftmost\_mid}$ privé de la boucle
+considérée ici, elle sera vrai pour $G_{leftmost\_mid}$ complet, et donc le
+lemme sera également vrai.
+
+\end{proof}
+
+Le graphe représentant les mouvement à gauche de $g(t)$ est aussi présenté en
+annexe sur la figure \ref{fig:graph_leftmost_left}. Celui des mouvement de
+droite est très complexe et ne présente pas grand intérêt pour ce rapport, il
+sera donc omis.
+
+Un dernier point concerne la complexité de l'algorithme. Si on arrive à compter
+le nombre de rondes nécessaire pour la ligne la plus haute à descendre, on aura
+la complexité totale du rassemblement assez facilement. Notre intuition nous
+dirige vers une complexité linéaire en la taille des robots (il y en a au plus
+$l*h$ si $l$ et $h$ sont les dimensions de $BB(0)$.) \\
+
+Cela conclue donc la partie recherche théorique du TER. Bien que l'unité
+d'enseignement ne sois terminée, je continue à prouver la correction de
+l'algorithme en partenariat avec mon tuteur. Je vais maintenant vous parler de
+l'aspect programmation du projet.
 
 \subsection{Programmation}
 
-Dans un algorithme séquentiel,
-pour l'implémentation, il faut 2 parcours de tous les robots : prévoir la
-prochaine position des robots, puis les déplacer. \\
+J'ai donc utilisé le langage Python et la bibliothèque TkInter, en me basant
+sur la charte de codage conseillée par Python~: PEP8~; le tout en anglais,
+permettant une plus grande maintenabilité. L'objectif était de créer une
+interface graphique permettant de visualiser les algorithmes distribués
+développés sur papier. \\
 
-1 screenshot de l'appli
+L'interface graphique nécessaire est très sommaire~: un canevas contenant une
+grille fixe, et deux boutons~:
+\begin{itemize}
+  \item \emph{next} pour avancer d'une étape dans l'algorithme
+  \item \emph{prev} pour reculer
+\end{itemize}
+Les clics de la souris sur le canevas permettent d'ajouter des robots à la
+volée sur l'espace où d'en enlever. Un autre bouton \emph{clear} a été ajouté
+pour supprimer tous les robots. Avec ceci, il est très facile d'effectuer des
+tests sur des exemples d'arrangements de robots qui pourrait poser problème. La
+figure \ref{fig:screenshot} en annexe montre une capture d'écran de
+l'application avec plusieurs arrangements de robots de tests en cours de
+rassemblement. Les robots colorés en rouge sont ceux qui se sont détectés comme
+étant dans un état quescient. \\
 
-\subsection{Programmation}
-IG
-pep8
+L'ensemble des robots est stocké en mémoire dans un conteneur Python appelé
+\texttt{set}. Il sert à stocker des ensembles, c'est à dire une liste d'objet
+uniques non ordonnée. Cela est suffisant car on a dit que les robots sur une
+même position peuvent être vus comme un seul et même robot.  Pour éviter de
+calculer plusieurs fois une étape (par exemple lors de clics successifs sur
+\emph{next} et \emph{prev}), on stocke une liste d'ensemble de robots indexés
+par le numéro de la ronde. C'est la classe \texttt{Space} qui contient cette
+liste, et elle fourni les méthodes d'avancement des robots ainsi que des
+méthodes pour le remplissage de l'espace.
+
+Des configurations de robots peuvent être écrites dans un fichier texte sous
+forme binaire, qui sera lu et automatiquement stocké en mémoire par le
+programme. Il suffit alors de choisir quels arrangements utiliser dans l'espace
+avant de lancer le programme. Il a donc fallu écrire une fonction qui traduit
+les coordonnées binaires des robots (décalages) en coordonnées cartésiennes (x
+et y). Voici l'exemple de la figure \ref{fig:oscillation}~: \\
+
+\begin{verbatim}
+spiky-square
+0 0 0 0 1 0 0 0 0
+0 1 1 1 0 1 1 1 0
+0 1 0 0 0 0 0 1 0
+0 1 0 0 0 0 0 1 0
+1 0 0 0 0 0 0 0 1
+0 1 0 0 0 0 0 1 0
+0 1 0 0 0 0 0 1 0
+0 1 1 1 0 1 1 1 0
+0 0 0 0 1 0 0 0 0
+\end{verbatim}
+
+En effet, tout les calculs sur les arrangements de robots sont en binaire. Ce
+n'est que lorsqu'on entre en contact avec l'interface graphique que l'espace
+est converti. Il a notamment fallu écrire une fonction de génération de
+configurations aléatoires. L'idée est de commencer par un espace empli de
+robots (une suite de 1), puis de les enlever (mettre un bit à 0) au fur et à
+mesure jusqu'à ce qu'on en ai le nombre désiré. Et à chaque fois qu'on met un
+bit à 0, on test si l'espace est encore connexe, si oui on continue, sinon, on
+remet bit à 1. Pour tester la connexité, on utilise un parcours en largeur des
+robots avec une pile en commençant par un le bit à 1 de poids le plus faible.
+\\
+
+Concernant l'implémentation de l'algorithme, tout d'abord, les cas de mouvement
+sont stockés dans un fichier à part comme dans la figure \ref{fig:cas_mvt}. Les
+rotations sont effectués automatiquement et le tout est stocké dans un
+dictionnaire Python permettant d'avoir directement le mouvement à effectuer à
+partir du voisinage. Le format est le suivant~:
+Les trois premières lignes correspondent à la version binaire de l'instantané,
+et la quatrième contient les coordonnées relatives au mouvement à effectuer.
+Les instantanés sont séparés par des lignes vides. Voici l'exemple du cas (d)~:
+\begin{verbatim}
+0 0 0
+0 1 0
+1 0 1
+1, 0
+\end{verbatim}
+Cela permet une grande flexibilité par rapport aux instantanés utilisés pour
+l'algorithme.
+
+Une première différence avec l'algorithme théorique est dû à la parallélisation
+des calculs effectués par les robots. Notre programme est séquentiel, il faut
+donc parcourir tous les robots deux fois au moins~: une pour prévoir la
+prochaine position des robots, une deuxième pour les déplacer.  Lorsqu'un clic
+est effectué sur le bouton \emph{next}, on récupère l'entourage de chaque robot
+sous forme binaire ainsi que leur mouvement associé. Puis on change les
+coordonnées des robots en gardant à part ceux qui étaient dans les cas (f),
+(g), (m) et (n). Enfin, pour ces derniers, on test s'ils sont déconnectés avec
+une opération binaire entre un masque et l'entourage récupéré, et on re-change
+leur coordonnées si nécessaire. \\
+
+Nous avons beaucoup utilisé la programmation pour la preuve de l'algorithme,
+notamment pour générer les graphes et vérifier les contraintes d'entourages
+pour traverser certaines arêtes (voir preuve.) Il a fallu écrire une fonction
+assez complexe manipulant des bits~: à partir d'un champs de bit
+interprété comme une matrice de 0 et de 1, récupérer une sous matrice dont les
+dimensions sont données. C'est peut-être la fonction qui m'a donné le plus de
+mal mais qui est très courte et fonctionne au final très bien. \\
+
+Le fait que nous ne manipulions que des champs de bits rend la génération de
+configurations très facile~: il suffit de compter en décimal, puis de convertir
+en binaire. Néanmoins, pour générer les graphes, il faut générer tous les
+arrangements sur un rectangle $7*7$, et à chaque fois, tester la connexité,
+avancer d'une étape, puis récupérer le nouveau voisinage~; et ce pour chaque
+instantané sujet à mouvement. Pour ce travail, il a fallu optimiser un maximum
+toutes ces opérations, en changeant les structures de données, en minimisant
+les opérations de vérification (de terminaison par exemple), etc... La
+génération de $G_{leftmost\_mid}$ a durée environ 45 minutes. C'est pour cela
+que même si ça nous aurai aidé pour la preuve de correction, nous n'avons pas
+généré les graphes pour deux étapes de l'algorithme. Ça aurait multiplié le
+temps de calcul de façon exponentiel, car il aurait fallu générer les
+arrangements sur des plus gros rectangles. \\
+
+Pour terminer, j'ai ajouter temporairement un système de \emph{dump} qui
+affiche sur la sortie standard les positions des robots présents sur l'espace,
+et si besoin les prochains mouvements. Le tout formaté pour \emph{tikz}. Je
+pouvais ainsi très facilement dessiner sur le rapport des configurations de
+robots venant directement du programme.

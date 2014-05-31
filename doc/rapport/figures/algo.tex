@@ -1,19 +1,19 @@
 \begin{algorithm}[h!]
-  $fin \leftarrow Faux$\;
+  $fini \leftarrow Faux$\;
   $k \leftarrow 0$\;
   \Tq{non $fini$} {
     $N_k \leftarrow prendre\_instantane()$\;
     \uSi{$k \% 2 = 0$} {
       % test d'arrêt
       \uSi{$N_k$ ne contient aucun voisin ou \\
-           $N_k$ est le cas $(a)$, $(b)$ ou $(j)$ et $N_{k-2}=rotation(N_k)$}{
+           $N_k$ est le cas $(a)$, $(b)$ ou $(j)$ et $N_{k-2}=rotation180(N_k)$}{
           $fini \leftarrow Vrai$\;
       }
       % mouvement si il n'y a personne en (i,j-2) ou (i+1,j-2)
       \SinonSi{$N_k$ est le cas $(f)$ ou $(m)$ et
-      ($i-2$,$j$) et ($i-2$,$j+1$) sont pleins soit vides ou \\
+      ($i-2$,$j$) et ($i-2$,$j+1$) sont pleins ou vides ou \\
       $N_k$ est le cas $(g)$ ou $(n)$ et
-      ($i+2$,$j$) et ($i+2$,$j+1$) sont pleins soit vides} {
+      ($i+2$,$j$) et ($i+2$,$j+1$) sont pleins ou vides} {
         se dépacer selon $N_k$\;
       }
     }
