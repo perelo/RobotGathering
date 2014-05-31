@@ -4,6 +4,8 @@
 """
 """
 
+from __future__ import print_function
+
 __author__ = 'Eloi Perdereau'
 __date__ = '31-03-2014'
 
@@ -12,6 +14,7 @@ import cases
 class Robot(tuple):
 
     space = None
+    arrows = None
 
     def __init__(self, b):
         super(Robot, self).__init__(tuple(b))
@@ -58,6 +61,8 @@ class Robot(tuple):
         i, j = self
         di, dj = cases.neighbors_cases.get(surrounding, (0,0))
         r = Robot([i+di, j+dj])
+        if r != self:
+            Robot.arrows.add('{' + str(self) + '/' + str(r) + '}')
 
         # check for danger cases (where we may get disconnected)
         r.in_danger = cases.symetrics.get(surrounding,-1) in cases.danger_cases

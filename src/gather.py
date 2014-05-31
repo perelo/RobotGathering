@@ -4,6 +4,8 @@
 """
 """
 
+from __future__ import print_function
+
 __author__ = 'Eloi Perdereau'
 __date__ = '11-03-2014'
 
@@ -35,6 +37,9 @@ class Space(object):
     def get_robots(self):
         return self.step_robots[self.step_index]
 
+    def dump(self, f):
+        print('{{',','.join(map(str, self.get_robots())),'}}', sep='', file=f)
+
     def get_robots_bin(self, w, h):
         # convert i, j coordinates to binary coordinate,
         # at the end, the space will be represented by a bitfield.
@@ -57,15 +62,19 @@ class Space(object):
                 return
 
         # compute all robot's next_positions
+        Robot.arrows = set()
         next_robots = map(Robot.next_position, self.get_robots())
+        # print('{{',sep='',end='')
+        # print(','.join(Robot.arrows),end='')
+        # print('}}',sep='')
 
         # do the step, ie move all robots in the space
         self.step_robots.append(set(next_robots))
         self.step_index += 1
 
         # some robots may be in danger, do another round to save them
-        robots_safe = map(Robot.save_from_danger, next_robots)
-        self.step_robots[self.step_index] = set(robots_safe)
+        # robots_safe = map(Robot.save_from_danger, next_robots)
+        # self.step_robots[self.step_index] = set(robots_safe)
 
         if not fast:
             # some robots may have done, note and count them
@@ -180,7 +189,7 @@ def fill_with_test_cases(s):
         ( test_cases['wierd1'],       40, 20 ),
         ( test_cases['circle1'],      0,  50 ),
         ( test_cases['circle2'],      20, 50 ),
-        ( test_cases['spiky-square'], 40, 50 ),
+        # ( test_cases['spiky-square'], 0, 0 ),
 
         ]
 
@@ -216,7 +225,7 @@ def fill_with_blocs_and_squares(s):
 
 
 def fill_with_random_connex(s, li, col, n):
-    print li, 'x', col, ', n =', n,
+    # print li, 'x', col, ', n =', n,
     r = generate_random_connex_space(li, col, n)
     s.add_robots_from_test_case(r, li, col, 0, 0)
 
@@ -246,7 +255,7 @@ def test_rectangle_complexity(s):
             while not s.is_quescient():
                 s.next_step()
                 count += 1
-            print m, n, 'donne', count
+            # print m, n, 'donne', count
             l, L = min(m,n), max(m,n)
             assert count ==   ceil((L-4)/2.0) \
                             + floor(l/2.0)*2 - 2*(1 - l%2) \

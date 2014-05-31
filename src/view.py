@@ -7,6 +7,7 @@
 __author__ = 'p1002650'
 __date__ = '30-04-2014'
 
+import sys
 import Tkinter as Tk
 
 from gather import *
@@ -75,6 +76,9 @@ class SpaceView(Tk.Canvas):
         self.space.clear()
         self.update()
 
+    def dump(self):
+        self.space.dump(sys.stdout)
+
 def remove_robot(view):
     def fct(event):
         view.remove_robot_at(event.x, event.y)
@@ -94,6 +98,7 @@ def display_space(s):
     btn_next = Tk.Button(fenetre, text='next', command=lambda:v.next_step())
     btn_prev = Tk.Button(fenetre, text='prev', command=lambda:v.prev_step())
     btn_clear = Tk.Button(fenetre, text='clear', command=lambda:v.clear())
+    btn_dump = Tk.Button(fenetre, text='dump', command=lambda:v.dump())
     v.bind("<Button-3>", remove_robot(v))
     v.bind("<B3-Motion>", remove_robot(v))
     v.bind("<Button-1>", add_robot(v))
@@ -102,8 +107,9 @@ def display_space(s):
     # pack everything and display
     v.pack()
     btn_next.pack()
-    btn_prev.pack()
+    # btn_prev.pack()
     btn_clear.pack()
+    btn_dump.pack()
     fenetre.mainloop()
 
 if __name__ == '__main__':
