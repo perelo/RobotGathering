@@ -73,8 +73,8 @@ class Space(object):
         self.step_index += 1
 
         # some robots may be in danger, do another round to save them
-        # robots_safe = map(Robot.save_from_danger, next_robots)
-        # self.step_robots[self.step_index] = set(robots_safe)
+        robots_safe = map(Robot.save_from_danger, next_robots)
+        self.step_robots[self.step_index] = set(robots_safe)
 
         if not fast:
             # some robots may have done, note and count them
@@ -180,16 +180,21 @@ def fill_with_test_cases(s):
         ( test_cases['bloc2,5'],      21, 11 ),
         ( test_cases['bloc3,3'],      21, 18 ),
         ( test_cases['bloc4,4'],      21, 23 ),
-        ( test_cases['garden3,7'],    27, 0  ),
-        ( test_cases['garden3,9'],    27, 10 ),
-        ( test_cases['garden5,9'],    27, 22 ),
-        ( test_cases['garden5,11'],   27, 34 ),
+        # ( test_cases['garden3,7'],    27, 0  ),
+        # ( test_cases['garden3,9'],    27, 10 ),
+        # ( test_cases['garden5,9'],    27, 22 ),
+        # ( test_cases['garden5,11'],   27, 34 ),
         ( test_cases['diag5,6'],      40, 0  ),
         ( test_cases['diag7,8'],      40, 10 ),
         ( test_cases['wierd1'],       40, 20 ),
         ( test_cases['circle1'],      0,  50 ),
         ( test_cases['circle2'],      20, 50 ),
-        # ( test_cases['spiky-square'], 0, 0 ),
+        ( test_cases['spiky-square'], 40, 50 ),
+        ( test_cases['circle4'],      27,  0 ),
+        ( test_cases['circle5'],      27, 6 ),
+        ( test_cases['circle6'],      27, 13 ),
+        ( test_cases['circle7'],      27, 21 ),
+        ( test_cases['circle8'],      27, 30 ),
 
         ]
 

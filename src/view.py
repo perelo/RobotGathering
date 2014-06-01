@@ -107,9 +107,9 @@ def display_space(s):
     # pack everything and display
     v.pack()
     btn_next.pack()
-    # btn_prev.pack()
+    btn_prev.pack()
     btn_clear.pack()
-    btn_dump.pack()
+    # btn_dump.pack()
     fenetre.mainloop()
 
 if __name__ == '__main__':
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     Robot.space = s
 
     # test_rectangle_complexity(s)
-    # fill_with_random_connex(s, 30, 30, (30*30))
+    # fill_with_random_connex(s, 35, 25, 200)
     fill_with_test_cases(s)
     # fill_with_blocs_and_squares(s)
 
