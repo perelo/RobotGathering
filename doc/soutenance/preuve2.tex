@@ -1,0 +1,31 @@
+\documentclass[border={0pt 0pt 0pt 0pt},convert={density=300,outext=.png}]{standalone}
+
+\usepackage{tikz}
+% \usepackage{pgf}
+% \usepackage{subcaption}
+\input{rapport/figures/newcommand.tex}
+
+\begin{document}
+
+  \begin{tikzpicture}[thick, scale=0.6]
+    \draw[red,ultra thin,opacity=1] (3,3) node {.};
+    \defstuff
+    \drawgrid{(5,4)}
+    \drawrobots{{(1,2),(1,1),(2,1),(3,0),(4,0),(4,1)}}
+    \drawarrows{{{(1,2)/(1,1)},{(1,1)/(2,2)},{(2,1)/(2,0)},{(3,0)/(3,1)}}}
+    % \draw[thin] (0,1) -- (3,1) -- (3,4) -- (0,4) -- (0,1);
+  \end{tikzpicture}
+
+  \begin{tikzpicture}[thick, scale=0.6]
+    \defstuff
+    \drawgrid{(5,4)}
+    \drawrobots{{(2,2),(1,1),(3,1)}}
+    \drawarrows{{}}
+    \draw[red] (2.5,0.5) circle (0.4);
+    % \draw[thin] (1,1) -- (4,1) -- (4,4) -- (1,4) -- (1,1);
+    \draw (4.5,0.5) node {?};
+    \draw (4.5,1.5) node {?};
+  \end{tikzpicture}
+
+
+\end{document}
