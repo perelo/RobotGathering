@@ -17,6 +17,13 @@
     }
 }
 
+\newcommand{\fillrobots}[2] {
+    \foreach \coord in #1 {
+      \coordinate[at=\coord, name=A];
+      \fill[#2] ($(A) + (offset)$) circle ({\cc*0.8});
+    }
+}
+
 \newcommand{\drawarrows}[1] {
     \foreach \a/\b in #1 {
       \coordinate[at=\a, name=A];
