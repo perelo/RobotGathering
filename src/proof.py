@@ -11,7 +11,7 @@ __date__ = '23-04-2014'
 
 from collections import defaultdict
 
-from cases import neighbors_cases
+from cases import neighbors_cases, _rotate0, _rotate90, _rotate270, _rotate180
 from gather import *
 from robot import *
 
@@ -86,6 +86,23 @@ def print_tex(x, m, n):
             robots.append(str(((n - (i%n) -1), (i/n))))
     print('\\spacee {', (n,m), '} {{', ','.join(robots), '}} {{}}', sep='')
 
+def print_all_cases():
+    cases = set()
+    Robot.space = Space()
+    m, n = 3,3
+    for x in xrange(1 << 3*3):
+        if x & 1 << 4 != 0:
+            ok = True
+            for rotate in [_rotate90, _rotate180, _rotate270]:
+                y, _ = rotate((x,(1,1)))
+                if y in cases:
+                    ok = False
+            Robot.space.clear()
+            Robot.space.add_robots_from_test_case(x, 3, n, 0, 0)
+            if ok :
+                cases.add(x)
+                print_tex(x,m,n)
+
 
 single_mask   = cases.fmt('1 1 1' \
                           '1 0 1' \
@@ -96,97 +113,77 @@ leftmost_mask = cases.fmt('1 1 1' \
 # single_cases   = filter(lambda x: x&  single_mask == 0, neighbors_cases.keys())
 leftmost_cases = filter(lambda x: x&leftmost_mask == 0, neighbors_cases.keys())
 
-# a = cases.fmt('0 0 0' \
-#               '0 1 1' \
-#               '1 1 0')
-# b = cases.fmt('0 0 0' \
-#               '0 1 1' \
-#               '0 1 1')
+a = cases.fmt('0 0 0' \
+              '0 1 1' \
+              '1 1 0')
+b = cases.fmt('0 0 0' \
+              '0 1 1' \
+              '0 1 1')
 
-# here = cases.fmt('0 0 0 0 0 0 0'\
-#                  '0 0 0 0 0 0 0'\
-#                  '0 0 0 0 0 0 0'\
-#                  '0 0 0 0 0 0 0'\
-#                  '0 0 0 0 0 0 0')
+here = cases.fmt('0 0 0 0 0 0 0'\
+                 '0 0 0 0 0 0 0'\
+                 '0 0 0 0 0 0 0'\
+                 '0 0 0 0 0 0 0'\
+                 '0 0 0 0 0 0 0')
 
-# not_here = cases.fmt('1 1 1 1 1 1 1'\
-#                      '1 1 1 0 0 0 0'\
-#                      '0 0 0 0 0 0 0'\
-#                      '0 0 0 0 0 0 0'\
-#                      '0 0 0 0 0 0 0')
+not_here = cases.fmt('1 1 1 1 1 1 1'\
+                     '1 1 1 0 0 0 0'\
+                     '0 0 0 0 0 0 0'\
+                     '0 0 0 0 0 0 0'\
+                     '0 0 0 0 0 0 0')
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     m, n = 5, 7
+    m, n = 5, 7
 
-#     Robot.space = Space()
+    Robot.space = Space()
 
-#     bad_cases = []
-#     for case in leftmost_cases:
-#         cpt, bad = 0, 0
-#         for pos in [LEFT]:
-#             g = gen_surrounding(pos, m-2, n, case, False)
-#             next_cases = set()
-#             for x in g:
-#                 Robot.space.clear()
-#                 Robot.space.add_robots_from_test_case(x, m, n, 0, 0)
-#                 Robot.space.next_step(fast='True')
-#                 rs = Robot.space.get_robots()
-#                 if len(rs) > 2 and (1,3) in rs:
-#                     y = Robot.space.get_robots_bin(n, m)
-#                     next_cases.add(case_of(y,1,3))
-#                     # if case_of(y,1,3) == b:
-#                         # next_cases.add(y)
-#                         # if x&here == here and x&not_here == 0:
-#                            # and (1 << 7 != 0 or 1 << 14 != 0 or 1 << 21 != 0):
-#                             # next_cases.add(x)
-#                             # bad += 1
-#                         # if cpt > 1000:
-#                         #     break
-#             bad_cases.append((case, next_cases))
-#             # print(bad, 'over', cpt)
+    bad_cases = []
+    for case in leftmost_cases:
+        cpt, bad = 0, 0
+        for pos in [LEFT]:
+            g = gen_surrounding(pos, m-2, n, case, False)
+            next_cases = set()
+            for x in g:
+                Robot.space.clear()
+                Robot.space.add_robots_from_test_case(x, m, n, 0, 0)
+                Robot.space.next_step(fast='True')
+                rs = Robot.space.get_robots()
+                if len(rs) > 2 and (1,3) in rs:
+                    y = Robot.space.get_robots_bin(n, m)
+                    next_cases.add(case_of(y,1,3))
+                    # if case_of(y,1,3) == b:
+                        # next_cases.add(y)
+                        # if x&here == here and x&not_here == 0:
+                           # and (1 << 7 != 0 or 1 << 14 != 0 or 1 << 21 != 0):
+                            # next_cases.add(x)
+                            # bad += 1
+                        # if cpt > 1000:
+                        #     break
+            bad_cases.append((case, next_cases))
+            # print(bad, 'over', cpt)
 
-#     Robot.space.clear()
+    Robot.space.clear()
 
-#     # dot
-#     labelized = set()
-#     print('digraph g {')
-#     for x, next_step in bad_cases:
-#         if x not in labelized:
-#             print(x, ' [label=', unfmt(x), ']', sep='')
-#             labelized.add(x)
-#         for y in next_step:
-#             if y not in labelized:
-#                 print(y, ' [label=', unfmt(y), ']', sep='')
-#                 labelized.add(y)
-#             print(x, ' -> ', y, ';', sep='')
-#     print('}')
+    # dot
+    labelized = set()
+    print('digraph g {')
+    for x, next_step in bad_cases:
+        if x not in labelized:
+            print(x, ' [label=', unfmt(x), ']', sep='')
+            labelized.add(x)
+        for y in next_step:
+            if y not in labelized:
+                print(y, ' [label=', unfmt(y), ']', sep='')
+                labelized.add(y)
+            print(x, ' -> ', y, ';', sep='')
+    print('}')
 
-# #     # latex
-# #     for x, next_steps in bad_cases:
-# #         print_tex(x, 3, 3)
-# #         print('\\\\\n')
-# #         for y in next_steps:
-# #             print_tex(y, 5, 7)
-# #         if next_steps:
-# #             print('\\\\\n')
-
-cases = set()
-
-from cases import _rotate0, _rotate90, _rotate270, _rotate180
-
-Robot.space = Space()
-m, n = 3,3
-for x in xrange(1 << 3*3):
-    if x & 1 << 4 != 0:
-        ok = True
-        for rotate in [_rotate90, _rotate180, _rotate270]:
-            y, _ = rotate((x,(1,1)))
-            if y in cases:
-                ok = False
-        Robot.space.clear()
-        Robot.space.add_robots_from_test_case(x, 3, n, 0, 0)
-        if ok :#and len(Robot.space.get_robots()) <= 5:
-            cases.add(x)
-            print_tex(x,m,n)
-            # print (len(Robot.space.get_robots()))
+#     # latex
+#     for x, next_steps in bad_cases:
+#         print_tex(x, 3, 3)
+#         print('\\\\\n')
+#         for y in next_steps:
+#             print_tex(y, 5, 7)
+#         if next_steps:
+#             print('\\\\\n')
