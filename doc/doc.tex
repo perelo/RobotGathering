@@ -206,7 +206,8 @@ $t-1$.
 
 \begin{prop}
 At step $t$, if a robot $w$ was not in the neighborhood of $r(t)$, then robot
-$w$ cannot be on the topmost row in step $(t+1)$.  \end{prop}
+$w$ cannot be on the topmost row in step $(t+1)$.
+\end{prop}
 
 The above properties imply that studying the neighborhood of $r(t)$ for new
 robots on the topmost row is sufficient to determine if the topmost row moved
@@ -358,10 +359,104 @@ The results of this section show that if there is only one robot in topmost
 rightmost)  column, then the bounding box shrinks within a constant number of
 steps.
 
-\begin{figure}
+\section{Multiple robots on the topmost row}
+
+We denote by $l(t)$ the leftmost robot in the topmost row of the bounding box at
+step $t$. The row and column of the cell occupied by $l(t)$ would be denoted
+similarly to $r(t)$ defined in the previous section.
+
+\begin{prop}
+The robot $l(t)$ cannot successively perform \emph{Mid-move}s indefinitely.
+\end{prop}
+
+\begin{proof}
+
+We define the graph $G_{leftmost\_mid}(V_{leftmost\_mid},
+E_{leftmost\_mid})$ as follows :
+\begin{itemize}
+  \item $V_{leftmost\_mid}$ : neighborhood cases of $l(t)$.
+  \item $(u,v) \in E_{leftmost\_mid}$ if $u$ is the neighborhood of $l(t)$ and
+        $v$ is the neighborhood of $l(t+1)$ such that $X(t)=X(t+1)$ and
+        $Y(t)=Y(t+1)$ and the configuration $C(t+1)$ is not \Gathered.
+\end{itemize}
+We notice multiple cycles in the graph; if any cyclic path is followed by the
+algorithm then the leftmost robot in the topmost row might never move. However,
+edges of the
+graph only represent single step transformations. We will show that the cyclic
+paths are not followed by the algorithm by studying 3 paths in the graph and
+this would be sufficient to prove that the proposition holds. \\
+
+TODO (c'est ok sur papier)
+
+\end{proof}
+
+\begin{prop}
+The robot $l(t)$ cannot successively perform a \emph{Left-move}s and a
+\emph{Mid-Move} by passing through neighborhoods of (1.3.7), (1.2.2) and
+(1.2.3).
+\end{prop}
+
+\begin{proof}
+
+We define the graph $G_{leftmost\_left}(V_{leftmost\_left},
+E_{leftmost\_left})$ similarly to $G_{leftmost\_mid}$ with $X(t)=X(t+1)-1$. We
+will examine it's edges and show that after each of them, a \emph{Mid-move} is
+impossible.
+
+\noindent
+We denote by $A$ to $H$ the 8 nodes of $G_{leftmost\_left}$ from top to
+bottom and left to right. \\
+
+% Let $t$ be the step at which the algorithm reaches the first node of the
+% considered path, i.e. the neighborhood of $r(t)$ is represented by this node.
+% For each path, the first edge is a \emph{Right-move}. \\
+% Every neighborhood requirements stated below have been programmatically tested.
+
+\begin{enumerate}
+\item Each destination of edges $(A,B)$, $(A,D)$, $(C,E)$, $(D,E)$, $(D,G)$ and
+      $(D,H)$ are sink nodes in $G_{leftmost\_mid}$.
+
+\item For the algorithm to follow the edge $(D,F)$, the following neighborhood
+      is required : \\
+      \spacee {(5,4)} {{(0,0),(0,1),(1,0),(2,1),(3,1),(3,2)}}
+      According to the rule (1.3.5), the robot at ($X(t)-1,Y(t)+1$) will move
+      down and occupy ($X(t+1),Y(t+1)+2$). \\
+      Yet, for $l(t)$ to perform a \emph{Mid-move} when it's neighborhood is
+      node $F$, one of the robots $(X(t)-1,Y(t)+1)$ or $(X(t)+1,Y(t)+1)$ must
+      have the neighborhood of rule (1.1.2).
+\end{enumerate}
+
+\end{proof}
+
+
+\appendix
+
+\section{Single robot movements}
+\begin{figure}[H]
 \includegraphics[scale=0.50]{graph_images/graph_single_all.jpg}
 \caption{Single robot}
 \label{graph:single}
+\end{figure}
+
+\section{Leftmost robot \emph{Mid-move}s}
+\begin{figure}[H]
+\includegraphics[scale=0.40]{graph_images/graph_leftmost_mid.jpg}
+\caption{\emph{Mid-move}}
+\label{graph:leftmost_mid}
+\end{figure}
+
+\section{Leftmost robot \emph{Left-move}s}
+\begin{figure}[H]
+\includegraphics[scale=0.50]{graph_images/graph_leftmost_left.jpg}
+\caption{\emph{Left-move}}
+\label{graph:leftmost_left}
+\end{figure}
+
+\section{Leftmost robot \emph{Right-move}s}
+\begin{figure}[H]
+\includegraphics[scale=0.40]{graph_images/graph_leftmost_right.jpg}
+\caption{\emph{Right-move}}
+\label{graph:leftmost_right}
 \end{figure}
 
 \end{document}
