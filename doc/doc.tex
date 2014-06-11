@@ -418,7 +418,7 @@ empty. \\
 \item $l(t+2)$ is on case F or H. To perform a \emph{Right-move}, ($X(t),Y(t)$)
       must be full for $l(t+2)$.
 \item $l(t+2)$ is on case G and ($X(t+2),Y(t+2)+2$) is full because to follow
-      edge ($D \leftarrow G$), $l(t+1)$ must have the following neighborhood~:
+      edge ($D \rightarrow G$), $l(t+1)$ must have the following neighborhood~:
       \spacee {(4,4)} {{(0,0),(1,1),(2,1),(2,2)}} \\
       Thus, to perform a \emph{Right-move} from case G, either
       ($X(t+2),Y(t+2)+2$) must be empty or both ($X(t+2)+2,0$) and
@@ -466,16 +466,16 @@ We showed above that a \emph{Left-Right-move} starting at case D is impossible
 or a \Gathered configuration is reached after a constant number of steps. A
 \emph{Left-move} starting at A leads to cases that cannot perform a
 \emph{Right-move} according to $G_{leftmost\_right}$. There are edges $C
-\leftarrow E$ and $C \leftarrow F$ left. \\
+\rightarrow E$ and $C \rightarrow F$ left. \\
 
-To follow edge $C \leftarrow E$, $l(t)$ must have the following neighborhood~:
+To follow edge $C \rightarrow E$, $l(t)$ must have the following neighborhood~:
 \spacee {(5,4)} {{(1,1),(2,1),(3,2),(4,1),(4,2)}}
 So $l(t+1)$ be in case (1.2.3) and perform a \emph{Right-move}. The robot
 $l(t+2)$ cannot be in case (1.2.1) (see proof above) and cells ($X(t+2)-2,1$)
 and ($X(t+2)-2,1$) are empty. Thus, from case A or C, ($X(t+2)-2,1$) must be
 occupied. \\
 
-To follow edge $C \leftarrow F$, there are 23800 possible cases and I don't
+To follow edge $C \rightarrow F$, there are 23800 possible cases and I don't
 know if a \emph{Right-move} at $t+1$ can lead to a \emph{Left-move} case. \\
 TODO
 \end{proof}
