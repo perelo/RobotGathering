@@ -363,7 +363,11 @@ steps.
 
 We denote by $l(t)$ the leftmost robot in the topmost row of the bounding box at
 step $t$. The row and column of the cell occupied by $l(t)$ would be denoted
-similarly to $r(t)$ defined in the previous section.
+similarly to $r(t)$ defined in the previous section. \\
+
+To identify robots in the neighborhood of $l(t)$, we will use its relative
+cardinal position to $l(t)$. For example, $S(t)$ is the robot right underneath
+$l(t)$, and $SEE(t)$ is at 2 cells on the right and one cell down of $l(t)$.
 
 \begin{prop}
 The robot $l(t)$ cannot successively perform \emph{Mid-move}s indefinitely.
@@ -466,31 +470,6 @@ destination of edges in $E_{leftmost\_left}$ to case A.
 
 
 \begin{prop}
-A \emph{Left-Right-move} starting at column $X(t)$ cannot occurs twice for the
-same column.
-\end{prop}
-
-\begin{proof}
-We showed above that a \emph{Left-Right-move} starting at case D is impossible
-or a \Gathered configuration is reached after a constant number of steps. A
-\emph{Left-move} starting at A leads to cases that cannot perform a
-\emph{Right-move} according to $G_{leftmost\_right}$. There are edges $C
-\rightarrow E$ and $C \rightarrow F$ left. \\
-
-To follow edge $C \rightarrow E$, $l(t)$ must have the following neighborhood~:
-\spacee {(5,4)} {{(1,1),(2,1),(3,2),(4,1),(4,2)}}
-So $l(t+1)$ be in case (1.2.3) and perform a \emph{Right-move}. The robot
-$l(t+2)$ cannot be in case (1.2.1) (see proof above) and cells ($X(t+2)-2,1$)
-and ($X(t+2)-2,1$) are empty. Thus, from case A or C, ($X(t+2)-2,1$) must be
-occupied. \\
-
-To follow edge $C \rightarrow F$, there are 23800 possible cases and I don't
-know if a \emph{Right-move} at $t+1$ can lead to a \emph{Left-move} case. \\
-TODO
-\end{proof}
-
-
-\begin{prop}
 After $l(t)$ performs a \emph{Left-move}, if $l(t+1)$ doesn't, than it will
 eventually perform a \emph{Right-move}, or a \Gathered configuration will be
 gathered or there will be only one robot in the topmost row. i.e $L(M)^{+}L$ is
@@ -513,6 +492,31 @@ case $D$.
       neighbor~: $l(t+1)$. Thus, $l(t+1)$ cannot perform the proper
       \emph{Mid-move}.
 \end{itemize}
+\end{proof}
+
+
+\begin{prop}
+A \emph{Left-Right-move} starting at column $X(t)$ cannot occurs twice for the
+same column.
+\end{prop}
+
+\begin{proof}
+We showed above that a \emph{Left-Right-move} starting at case D is impossible
+or a \Gathered configuration is reached after a constant number of steps. A
+\emph{Left-move} starting at A leads to cases that cannot perform a
+\emph{Right-move} according to $G_{leftmost\_right}$. There are edges $C
+\rightarrow E$ and $C \rightarrow F$ left. \\
+
+To follow edge $C \rightarrow E$, $l(t)$ must have the following neighborhood~:
+\spacee {(5,4)} {{(1,1),(2,1),(3,2),(4,1),(4,2)}}
+So $l(t+1)$ be in case (1.2.3) and perform a \emph{Right-move}. The robot
+$l(t+2)$ cannot be in case (1.2.1) (see proof above) and cells ($X(t+2)-2,1$)
+and ($X(t+2)-2,1$) are empty. Thus, from case A or C, ($X(t+2)-2,1$) must be
+occupied. \\
+
+To follow edge $C \rightarrow F$, there are 23800 possible cases and I don't
+know if a \emph{Right-move} at $t+1$ can lead to a \emph{Left-move} case. \\
+TODO
 \end{proof}
 
 
