@@ -392,7 +392,7 @@ TODO (c'est ok sur papier)
 
 \begin{prop}
 If $l(t)$ performs two \emph{Left-move}s consecutively, than $X(l(t+3)) \geq
-X(l(t))$.
+X(l(t))$ or $C(t+4)$ is \Gathered.
 \end{prop}
 
 \begin{proof}
@@ -412,11 +412,19 @@ Let $l(t)$ be the robot performing two \emph{Left-move}s consecutively. \\
 The robot $l(t+2)$ can only be on cases E, F, G or H. \\
 And cell ($X(t),Y(t)$) is empty because $NE(t+1)$, $E(t+1)$ and $SE(t+1)$ are
 empty. \\
+
 \begin{itemize}
-\item $l(t+2)$ is on case E. See proof for path ($B \rightarrow D \rightarrow
-      B$) in the previous section.
 \item $l(t+2)$ is on case F or H. To perform a \emph{Right-move}, ($X(t),Y(t)$)
       must be full for $l(t+2)$.
+
+\item $l(t+2)$ is on case E. To perform a \emph{Right-move}, either $EE(t+2)$
+      must be occupied or $S(t+2)$ must be on case (1.2.6). The former case is
+      impossible because $EE(t+2)$ is ($X(t),Y(t)$) which is empty.
+      Moreover, to follow edge ($D \rightarrow E$), at least one of $SWW(t+1)$
+      and $SSWW(t+1)$ must be occupied. So at $t+2$, either $SSW(t+1)$ or
+      $SSWW(t+1)$ are occupied which prevent $l(t+2)$ to perform a
+      \emph{Right-move}~; or $C(t+3)$ is \Gathered.
+
 \item $l(t+2)$ is on case G and ($X(t+2),Y(t+2)+2$) is full because to follow
       edge ($D \rightarrow G$), $l(t+1)$ must have the following neighborhood~:
       \spacee {(4,4)} {{(0,0),(1,1),(2,1),(2,2)}} \\
@@ -424,6 +432,7 @@ empty. \\
       ($X(t+2),Y(t+2)+2$) must be empty or both ($X(t+2)+2,0$) and
       ($X(t+2)+2,1$) must be full. Or the configuration is \Gathered.
 \end{itemize}
+
 So after two \emph{Left-move}s, a \emph{Right-move} is impossible (or the
 configuration is \Gathered. \\
 
@@ -488,13 +497,14 @@ gathered or there will be only one robot in the topmost row.
 \end{prop}
 
 \begin{proof}
+
 There are no path from any destination of edges in $E_{leftmost\_left}$ to case
 A, C or D, i.e cases from which a \emph{Left-move} is possible.
 \end{proof}
 
 
 \begin{prop}
-After a \emph{Left-move}, a series of \emph{Right-move}s starting at case G,
+After a \emph{Left-move}, a series of \emph{Mid-move}s starting at case G,
 and a \emph{Right-move}, a \emph{Left-move} is impossible.
 \end{prop}
 
